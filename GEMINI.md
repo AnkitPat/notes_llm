@@ -3,7 +3,7 @@
 This file contains project-wide instructions, conventions, and workflows that must be followed across all sessions.
 
 ## Core Conventions
-- **Before starting any task please creat user story under documentations/user-stories.md 
+- **User Story First:** Before starting any development task, you **MUST** create or update a corresponding User Story in `documentations/user-stories.md`. This ensures alignment on requirements and success criteria.
 - **Collaboration:** Before starting any User Story, discuss the "Plan of Action" and get user confirmation.
 - **Design First:** For every User Story, you **MUST** create a design spec (`docs/superpowers/specs/`) and an implementation plan (`docs/superpowers/plans/`) before writing any implementation code.
 - **Tech Stack:**
