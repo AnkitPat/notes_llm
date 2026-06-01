@@ -1,12 +1,12 @@
+'use client';
 import React from 'react';
-import { useRouter } from 'next/router';
-import AuthLayout from '../components/AuthLayout';
+import { useRouter } from 'next/navigation';
+import AuthLayout from '../../components/AuthLayout';
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
 
   const handleGoogleLogin = () => {
-    // Redirect to FastAPI backend's Google OAuth initiation endpoint
     window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/login/google`;
   };
 

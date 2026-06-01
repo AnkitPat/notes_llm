@@ -1,0 +1,63 @@
+<h2>Login Screen Details: Horizontal Split</h2>
+<p class="subtitle">Let's refine the contents of your chosen layout.</p>
+
+<div class="split">
+  <div class="mockup" style="flex: 1;">
+    <h3>Left Panel: Image Area</h3>
+    <div class="placeholder" style="height: 150px; background-color: #e0e0e0; display: flex; align-items: center; justify-content: center;">
+      What kind of image would you like here?
+    </div>
+    <div class="options">
+        <div class="option" data-choice="abstract_illustration" onclick="toggleSelect(this)">
+            <div class="letter">A</div>
+            <div class="content">
+                <h3>Abstract Illustration</h3>
+                <p>Modern, minimalist, vector-based graphics.</p>
+            </div>
+        </div>
+        <div class="option" data-choice="product_screenshot" onclick="toggleSelect(this)">
+            <div class="letter">B</div>
+            <div class="content">
+                <h3>Product Screenshot / Mockup</h3>
+                <p>A visual representation of the notes_llm application.</p>
+            </div>
+        </div>
+        <div class="option" data-choice="custom_upload" onclick="toggleSelect(this)">
+            <div class="letter">C</div>
+            <div class="content">
+                <h3>Placeholder for Custom Upload</h3>
+                <p>Indicate that the image will be configurable later.</p>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="mockup" style="flex: 1;">
+    <h3>Right Panel: Login Form</h3>
+    <div class="placeholder" style="height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+      What content do you need alongside "Login with Google"?
+    </div>
+    <div class="options">
+        <div class="option" data-choice="only_google_login" onclick="toggleSelect(this)">
+            <div class="letter">D</div>
+            <div class="content">
+                <h3>Only "Login with Google"</h3>
+                <p>A single prominent Google login button.</p>
+            </div>
+        </div>
+        <div class="option" data-choice="google_and_text" onclick="toggleSelect(this)">
+            <div class="letter">E</div>
+            <div class="content">
+                <h3>Google Login with Welcome Text</h3>
+                <p>Short welcome message or app description above the button.</p>
+            </div>
+        </div>
+        <div class="option" data-choice="google_and_terms" onclick="toggleSelect(this)">
+            <div class="letter">F</div>
+            <div class="content">
+                <h3>Google Login with Terms/Privacy Links</h3>
+                <p>Small links to terms of service and privacy policy.</p>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>

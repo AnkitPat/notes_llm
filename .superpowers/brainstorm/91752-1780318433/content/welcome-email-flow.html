@@ -1,0 +1,64 @@
+<h2>Welcome Message & Email Confirmation</h2>
+<p class="subtitle">Let's define the content for the welcome message and the details of the email confirmation process.</p>
+
+<div class="section">
+  <h3>Welcome Message (Above "Login with Google")</h3>
+  <div class="options">
+    <div class="option" data-choice="simple_greeting" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>Simple Greeting</h3>
+        <p>"Welcome to notes_llm! Please log in."</p>
+      </div>
+    </div>
+    <div class="option" data-choice="brief_description" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>Brief App Description</h3>
+        <p>"Your personal knowledge hub. Log in to access your notes."</p>
+      </div>
+    </div>
+    <div class="option" data-choice="custom_text" onclick="toggleSelect(this)">
+      <div class="letter">C</div>
+      <div class="content">
+        <h3>Custom Text (to be provided later)</h3>
+        <p>A placeholder for a specific welcome message.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Email Confirmation Flow</h3>
+  <p>You mentioned: "AFTER Google login user will not be able to access, for this to work, mail will be triggered on new user login to 'siddeshgandhe@gmail.com' to confirm user access via link."</p>
+  <div class="options" data-multiselect>
+    <div class="option" data-choice="auto_send_email" onclick="toggleSelect(this)">
+      <div class="letter">D</div>
+      <div class="content">
+        <h3>Automatic Email Trigger</h3>
+        <p>Email is sent to 'siddeshgandhe@gmail.com' immediately after a new user logs in via Google.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="manual_approval_needed" onclick="toggleSelect(this)">
+      <div class="letter">E</div>
+      <div class="content">
+        <h3>Manual Approval for Existing Accounts</h3>
+        <p>If 'siddeshgandhe@gmail.com' is already a registered user, they still need to manually approve new users.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="new_user_status" onclick="toggleSelect(this)">
+      <div class="letter">F</div>
+      <div class="content">
+        <h3>New User Status</h3>
+        <p>New users remain in a "pending access" state until manually approved by 'siddeshgandhe@gmail.com'.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="redirect_unapproved" onclick="toggleSelect(this)">
+      <div class="letter">G</div>
+      <div class="content">
+        <h3>Redirect Unapproved Users</h3>
+        <p>Unapproved users are redirected to a "Pending Approval" page after Google login.</p>
+      </div>
+    </div>
+  </div>
+</div>

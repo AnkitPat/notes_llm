@@ -1,0 +1,18 @@
+# Node modules
+node_modules
+.next
+.pnpm-store
+.npm
+
+# Python virtual environment
+venv
+__pycache__
+*.pyc
+
+# Environment files
+.env
+
+# Logs and system files
+logs/
+*.log
+.DS_Store

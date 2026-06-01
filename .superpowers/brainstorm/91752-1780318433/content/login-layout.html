@@ -1,0 +1,30 @@
+<h2>Login Screen Layout</h2>
+<p class="subtitle">How would you like to arrange the login screen elements?</p>
+
+<div class="options">
+  <div class="option" data-choice="split_horizontal" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Horizontal Split</h3>
+      <div class="split">
+        <div class="mockup" style="flex: 1;"><div class="placeholder" style="height: 200px;">Image Area</div></div>
+        <div class="mockup" style="flex: 1;"><div class="placeholder" style="height: 200px;">Login Form</div></div>
+      </div>
+      <p>Image on left, login form on right.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="image_background" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Image Background</h3>
+      <div class="mockup">
+        <div class="placeholder" style="height: 200px; background-image: url('https://via.placeholder.com/400x200/cccccc/ffffff?text=Background+Image'); background-size: cover; display: flex; align-items: center; justify-content: center;">
+          <div class="mockup" style="width: 70%; background-color: rgba(255,255,255,0.8); padding: 20px;">
+            <div class="placeholder" style="height: 100px;">Login Form</div>
+          </div>
+        </div>
+      </div>
+      <p>Login form overlaid on a background image.</p>
+    </div>
+  </div>
+</div>
