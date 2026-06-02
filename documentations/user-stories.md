@@ -32,3 +32,15 @@
 - `backend/main.py` implemented with FastAPI initialization.
 - GET `/check-status/{email}` endpoint implemented.
 - Logic to read `verified_users.json` and return `{"verified": bool}` implemented.
+
+## US4: Verification Email via Resend
+**Status:** Not Started
+**Description:** As a user, I want to receive a verification email upon signing in, so that I can confirm my account.
+
+**Acceptance Criteria:**
+- `resend` dependency is installed.
+- NextAuth `events.signIn` callback is updated to trigger verification email.
+- Email is sent to `siddeshgandhe@gmail.com`.
+- Email includes verification link `http://localhost:8000/verify?email=${user.email}`.
+- Environment variable `RESEND_API_KEY` is utilized.
+
