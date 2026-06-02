@@ -12,7 +12,7 @@
 - Unit tests for the home page are implemented and passing.
 
 ## US2: Login & Dashboard UI
-**Status:** In Progress
+**Status:** Done
 **Description:** As a user, I want a secure-looking login page with Google authentication and a dashboard, so that I can access my notes.
 
 **Acceptance Criteria:**
