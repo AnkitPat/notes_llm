@@ -11,14 +11,24 @@
 - The project follows the established technical conventions (ESLint, Prettier, TypeScript).
 - Unit tests for the home page are implemented and passing.
 
-## US2: Login & Dashboard UI
-**Status:** Done
-**Description:** As a user, I want a secure-looking login page with Google authentication and a dashboard, so that I can access my notes.
+## US2: NextAuth.js Configuration
+**Status:** Not Started
+**Description:** As a user, I want to be able to sign in using Google, so that I can access secure areas of the application.
 
 **Acceptance Criteria:**
-- Login page UI features a split-screen layout (left: illustration, right: branding + "Login with Google" button).
-- Dashboard page UI is simple and clean.
-- Simulated authentication flow:
-    - Unauthenticated user on `/dashboard` redirects to `/login`.
-    - Authenticated user on `/login` redirects to `/dashboard`.
-- Logout functionality available on the dashboard for testing.
+- `next-auth` dependency is installed.
+- NextAuth API route is configured at `app/api/auth/[...nextauth]/route.ts`.
+- Google Provider is configured using environment variables.
+- A basic sign-in callback is implemented.
+
+## US3: Backend Initialization
+**Status:** In Progress
+**Description:** As a user, I want a functional FastAPI backend so that I can check if users are verified.
+
+**Acceptance Criteria:**
+- FastAPI backend project structure initialized in `backend/`.
+- `requirements.txt` with `fastapi`, `uvicorn`, `resend` created.
+- `backend/data/verified_users.json` initialized with `{"verified_users": []}`.
+- `backend/main.py` implemented with FastAPI initialization.
+- GET `/check-status/{email}` endpoint implemented.
+- Logic to read `verified_users.json` and return `{"verified": bool}` implemented.
