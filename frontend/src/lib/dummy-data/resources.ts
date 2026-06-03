@@ -6,7 +6,7 @@ const dummyResources: Resource[] = [
     id: 'doc-1',
     type: 'Document',
     title: 'Meeting Notes Q1 2026',
-    content: '## Meeting Notes - Q1 2026
+    content: `## Meeting Notes - Q1 2026
 
 **Date:** January 15, 2026
 
@@ -22,7 +22,7 @@ const dummyResources: Resource[] = [
 - Jane: Prepare Q1 budget report.
 - Bob: Develop social media campaign ideas.
 
----',
+---`,
   },
   {
     id: 'link-1',
@@ -34,18 +34,18 @@ const dummyResources: Resource[] = [
     id: 'note-1',
     type: 'Note',
     title: 'Ideas for New Feature',
-    content: 'Brainstormed some ideas for the new user authentication flow:
+    content: `Brainstormed some ideas for the new user authentication flow:
 - Social logins (Google, GitHub)
 - Email/password with MFA
 - Magic links for passwordless access
 
-Need to research NextAuth.js capabilities further.',
+Need to research NextAuth.js capabilities further.`,
   },
   {
     id: 'doc-2',
     type: 'Document',
     title: 'Project Phoenix Proposal',
-    content: '## Project Phoenix: A New Initiative
+    content: `## Project Phoenix: A New Initiative
 
 **Overview:** Project Phoenix aims to revitalize our legacy codebase by migrating to a modern, scalable architecture. This will involve updating core dependencies, refactoring critical modules, and improving developer experience.
 
@@ -62,7 +62,7 @@ Need to research NextAuth.js capabilities further.',
 **Key Technologies:**
 -   Next.js for frontend.
 -   FastAPI for backend microservices.
--   TypeScript for type safety.',
+-   TypeScript for type safety.`,
   },
   {
     id: 'link-2',

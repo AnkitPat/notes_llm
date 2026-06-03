@@ -55,3 +55,16 @@
 - "Logout" button on `/waiting-verification` works correctly.
 - "Refresh Status" button on `/waiting-verification` checks status again.
 
+## US6: Dashboard UI (Frontend Only)
+**Status:** Not Started
+**Description:** As a user, I want to view a dashboard with a list of my resources (Documents, Links, Notes) and the ability to add new ones, so that I can easily manage and interact with my content. I also want to view the content of selected resources and ask questions about them.
+
+**Acceptance Criteria:**
+- The dashboard page is accessible (e.g., at `/dashboard`).
+- A left panel displays a list of resource types: "Documents", "Links", and "Notes".
+- An "Add Resource" option is present at the bottom of the left panel.
+- A right panel (occupying approximately 70% of the screen) displays the content of the currently selected resource.
+- The right panel includes a section for asking questions and viewing answers (chat/Q&A).
+- The UI uses dummy sample data for resources and content.
+- No backend logic is modified for this user story.
+
