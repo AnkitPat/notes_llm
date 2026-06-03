@@ -9,6 +9,7 @@ import dummyResources from '@/lib/dummy-data/resources';
 import dummyChatResponses from '@/lib/dummy-data/chat';
 import { Resource, ChatMessage, ResourceType } from '@/types/dashboard';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { signOut } from 'next-auth/react';
 
 const DashboardPage: React.FC = () => {
   const [resources, setResources] = useState<Resource[]>(dummyResources);
@@ -70,6 +71,18 @@ const DashboardPage: React.FC = () => {
 
         {/* Right Panel - Content Display and Chat */}
         <div className="w-[70%] flex flex-col p-6 overflow-hidden">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">
+              {selectedResource ? `Viewing: ${selectedResource.title}` : 'Welcome to your dashboard'}
+            </h1>
+            <button
+              onClick={() => signOut()}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors shadow-sm"
+            >
+              Logout
+            </button>
+          </div>
+
           <div className="flex-grow bg-white rounded-lg shadow mb-6 overflow-hidden flex flex-col">
             <div className="flex-grow overflow-y-auto">
               <ResourceContentDisplay selectedResource={selectedResource} />
