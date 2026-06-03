@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { Resend } from 'resend';
+import { getAdminApprovalEmail } from '../../../../lib/email-templates';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -26,8 +27,8 @@ const handler = NextAuth({
           const result = await resend.emails.send({
             from: 'onboarding@resend.dev', // Use a verified domain or onboarding
             to: ['ms.aaabb@gmail.com'],
-            subject: 'Verify your account',
-            html: `<p>Please verify your email: <a href="http://localhost:8000/verify?email=${user.email}">Verify Email</a></p>`,
+            subject: 'New User Pending Approval',
+            html: getAdminApprovalEmail(user.email),
           });
           console.log("DEBUG: Email send result:", result);
         } catch (error) {
