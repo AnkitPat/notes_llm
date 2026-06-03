@@ -65,6 +65,22 @@ describe('ResourceNavigation', () => {
     expect(onSelectResourceMock).toHaveBeenCalledWith(dummyResources[0]);
   });
 
+  it('renders category cards with item counts', () => {
+    render(
+      <ResourceNavigation
+        resources={dummyResources}
+        selectedResource={null}
+        onSelectResource={() => {}}
+        onAddResource={() => {}}
+      />
+    );
+
+    expect(screen.getByText(/All Resources/i)).toBeInTheDocument();
+    expect(screen.getByText(/3/i)).toBeInTheDocument(); // Total count (1 doc, 1 link, 1 note in dummyResources)
+    expect(screen.getByText(/Documents/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/1/i).length).toBeGreaterThanOrEqual(1); // Counts for categories
+  });
+
   it('calls onAddResource when "Create Resource" button is clicked after filling the form', async () => {
     const onAddResourceMock = vi.fn();
     render(

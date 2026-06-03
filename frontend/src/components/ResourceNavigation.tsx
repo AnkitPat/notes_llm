@@ -28,6 +28,11 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
       ? resources
       : resources.filter((res) => res.type === filterType);
 
+  const getCount = (type: ResourceType | 'All Resources') => {
+    if (type === 'All Resources') return resources.length;
+    return resources.filter((res) => res.type === type).length;
+  };
+
   const handleAddResource = () => {
     if (newResourceTitle.trim() && newResourceContent.trim()) {
       onAddResource(newResourceType, newResourceTitle.trim(), newResourceContent.trim());
@@ -39,43 +44,56 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
 
   return (
     <div className="flex flex-col h-full bg-gray-800 text-white p-4">
-      <h2 className="text-xl font-bold mb-4">Resources</h2>
+      <h2 className="text-xl font-bold mb-6">Notebook LLM</h2>
 
-      <div className="mb-4">
+      {/* Top Section - Category Cards */}
+      <div className="grid grid-cols-2 gap-3 mb-6">
         <button
-          className={`block w-full text-left py-2 px-3 rounded-md ${
-            filterType === 'All Resources' ? 'bg-blue-600' : 'hover:bg-gray-700'
+          className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
+            filterType === 'All Resources'
+              ? 'bg-blue-600 border-blue-400'
+              : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
           }`}
           onClick={() => setFilterType('All Resources')}
         >
-          All Resources
+          <span className="text-xs font-semibold uppercase tracking-wider opacity-80">All Resources</span>
+          <span className="text-xl font-bold">{getCount('All Resources')}</span>
         </button>
         {(['Document', 'Link', 'Note'] as ResourceType[]).map((type) => (
           <button
             key={type}
-            className={`block w-full text-left py-2 px-3 rounded-md mt-1 ${
-              filterType === type ? 'bg-blue-600' : 'hover:bg-gray-700'
+            className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
+              filterType === type
+                ? 'bg-blue-600 border-blue-400'
+                : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
             }`}
             onClick={() => setFilterType(type)}
           >
-            {type}s
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">{type}s</span>
+            <span className="text-xl font-bold">{getCount(type)}</span>
           </button>
         ))}
       </div>
 
+      <div className="border-t border-gray-700 mb-6"></div>
+
+      {/* Bottom Section - Resource List */}
+      <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-3 px-2">
+        {filterType === 'All Resources' ? 'Recent Resources' : `${filterType} List`}
+      </h3>
       <div className="flex-grow overflow-y-auto pr-2">
         <ul className="space-y-1">
           {filteredResources.map((resource) => (
             <li
               key={resource.id}
-              className={`cursor-pointer py-2 px-3 rounded-md ${
+              className={`cursor-pointer py-2 px-3 rounded-lg transition-colors ${
                 selectedResource?.id === resource.id
-                  ? 'bg-gray-700'
-                  : 'hover:bg-gray-700'
+                  ? 'bg-gray-700 text-blue-400 font-medium'
+                  : 'hover:bg-gray-700 text-gray-300'
               }`}
               onClick={() => onSelectResource(resource)}
             >
-              {resource.title} ({resource.type})
+              {resource.title}
             </li>
           ))}
         </ul>
@@ -83,23 +101,23 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
 
       <div className="mt-4 pt-4 border-t border-gray-700">
         <button
-          className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md w-full"
+          className="bg-green-600 hover:bg-green-700 text-white py-2.5 px-4 rounded-xl w-full font-medium transition-colors"
           onClick={() => setShowAddForm(!showAddForm)}
         >
-          {showAddForm ? 'Cancel Add Resource' : 'Add Resource'}
+          {showAddForm ? 'Cancel' : 'Add Resource'}
         </button>
 
         {showAddForm && (
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 space-y-2 bg-gray-900 p-3 rounded-xl border border-gray-700">
             <input
               type="text"
               placeholder="Resource Title"
-              className="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none"
+              className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
               value={newResourceTitle}
               onChange={(e) => setNewResourceTitle(e.target.value)}
             />
             <select
-              className="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none"
+              className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
               value={newResourceType}
               onChange={(e) => setNewResourceType(e.target.value as ResourceType)}
             >
@@ -110,12 +128,12 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
             <textarea
               placeholder="Content (for Note/Document) or URL (for Link)"
               rows={3}
-              className="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none"
+              className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
               value={newResourceContent}
               onChange={(e) => setNewResourceContent(e.target.value)}
             ></textarea>
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md w-full"
+              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg w-full font-bold"
               onClick={handleAddResource}
             >
               Create Resource
