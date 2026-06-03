@@ -44,3 +44,14 @@
 - Email includes verification link `http://localhost:8000/verify?email=${user.email}`.
 - Environment variable `RESEND_API_KEY` is utilized.
 
+## US5: Waiting for Verification Flow
+**Status:** Not Started
+**Description:** As a new user, I want to be redirected to a "Waiting for Verification" page after my first Google login, so I understand why I can't access the dashboard yet.
+
+**Acceptance Criteria:**
+- New page `/waiting-verification` is created with branding-consistent UI.
+- `ProtectedRoute` is updated to check backend verification status.
+- Unverified users are redirected to `/waiting-verification` when trying to access protected routes.
+- "Logout" button on `/waiting-verification` works correctly.
+- "Refresh Status" button on `/waiting-verification` checks status again.
+
