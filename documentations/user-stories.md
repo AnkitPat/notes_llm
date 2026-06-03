@@ -11,14 +11,47 @@
 - The project follows the established technical conventions (ESLint, Prettier, TypeScript).
 - Unit tests for the home page are implemented and passing.
 
-## US2: Login & Dashboard UI
-**Status:** Done
-**Description:** As a user, I want a secure-looking login page with Google authentication and a dashboard, so that I can access my notes.
+## US2: NextAuth.js Configuration
+**Status:** Not Started
+**Description:** As a user, I want to be able to sign in using Google, so that I can access secure areas of the application.
 
 **Acceptance Criteria:**
-- Login page UI features a split-screen layout (left: illustration, right: branding + "Login with Google" button).
-- Dashboard page UI is simple and clean.
-- Simulated authentication flow:
-    - Unauthenticated user on `/dashboard` redirects to `/login`.
-    - Authenticated user on `/login` redirects to `/dashboard`.
-- Logout functionality available on the dashboard for testing.
+- `next-auth` dependency is installed.
+- NextAuth API route is configured at `app/api/auth/[...nextauth]/route.ts`.
+- Google Provider is configured using environment variables.
+- A basic sign-in callback is implemented.
+
+## US3: Backend Initialization
+**Status:** In Progress
+**Description:** As a user, I want a functional FastAPI backend so that I can check if users are verified.
+
+**Acceptance Criteria:**
+- FastAPI backend project structure initialized in `backend/`.
+- `requirements.txt` with `fastapi`, `uvicorn`, `resend` created.
+- `backend/data/verified_users.json` initialized with `{"verified_users": []}`.
+- `backend/main.py` implemented with FastAPI initialization.
+- GET `/check-status/{email}` endpoint implemented.
+- Logic to read `verified_users.json` and return `{"verified": bool}` implemented.
+
+## US4: Verification Email via Resend
+**Status:** Not Started
+**Description:** As a user, I want to receive a verification email upon signing in, so that I can confirm my account.
+
+**Acceptance Criteria:**
+- `resend` dependency is installed.
+- NextAuth `events.signIn` callback is updated to trigger verification email.
+- Email is sent to `siddeshgandhe@gmail.com`.
+- Email includes verification link `http://localhost:8000/verify?email=${user.email}`.
+- Environment variable `RESEND_API_KEY` is utilized.
+
+## US5: Waiting for Verification Flow
+**Status:** Not Started
+**Description:** As a new user, I want to be redirected to a "Waiting for Verification" page after my first Google login, so I understand why I can't access the dashboard yet.
+
+**Acceptance Criteria:**
+- New page `/waiting-verification` is created with branding-consistent UI.
+- `ProtectedRoute` is updated to check backend verification status.
+- Unverified users are redirected to `/waiting-verification` when trying to access protected routes.
+- "Logout" button on `/waiting-verification` works correctly.
+- "Refresh Status" button on `/waiting-verification` checks status again.
+

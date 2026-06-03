@@ -1,21 +1,21 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { signIn, useSession } from 'next-auth/react';
 
 export default function LoginPage() {
-  const { isAuthenticated, login } = useAuth();
+  const { data: session } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (session) {
       router.push('/dashboard');
     }
-  }, [isAuthenticated, router]);
+  }, [session, router]);
 
   const handleLogin = () => {
-    login();
+    signIn('google');
   };
 
   return (
