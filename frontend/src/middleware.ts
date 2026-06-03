@@ -7,7 +7,13 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Allow public routes
-  if (pathname === '/login' || pathname === '/api/auth' || pathname === '/_next' || pathname.includes('.')) {
+  // ADDED: '/api/auth/' to ignore all NextAuth internal API calls
+  if (
+    pathname === '/login' || 
+    pathname.startsWith('/api/auth/') || 
+    pathname === '/_next' || 
+    pathname.includes('.')
+  ) {
     return NextResponse.next();
   }
 
