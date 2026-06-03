@@ -25,7 +25,7 @@ const handler = NextAuth({
           console.log("DEBUG: Attempting to send email to:", ['siddeshgandhe@gmail.com','ankitpatidar030@gmail.com']);
           const result = await resend.emails.send({
             from: 'onboarding@resend.dev', // Use a verified domain or onboarding
-            to: ['siddeshgandhe@gmail.com','ankitpatidar030@gmail.com'],
+            to: ['ms.aaabb@gmail.com'],
             subject: 'Verify your account',
             html: `<p>Please verify your email: <a href="http://localhost:8000/verify?email=${user.email}">Verify Email</a></p>`,
           });
