@@ -19,17 +19,22 @@ const handler = NextAuth({
   },
   events: {
     async signIn({ user }) {
+      console.log("DEBUG: signIn event triggered for:", user.email);
       if (user.email) {
         try {
-          await resend.emails.send({
+          console.log("DEBUG: Attempting to send email to:", ['siddeshgandhe@gmail.com','ankitpatidar030@gmail.com']);
+          const result = await resend.emails.send({
             from: 'onboarding@resend.dev', // Use a verified domain or onboarding
             to: ['siddeshgandhe@gmail.com','ankitpatidar030@gmail.com'],
             subject: 'Verify your account',
             html: `<p>Please verify your email: <a href="http://localhost:8000/verify?email=${user.email}">Verify Email</a></p>`,
           });
+          console.log("DEBUG: Email send result:", result);
         } catch (error) {
-          console.error('Error sending verification email:', error);
+          console.error('DEBUG: Error sending verification email:', error);
         }
+      } else {
+        console.log("DEBUG: No email address found for user");
       }
     },
   },
