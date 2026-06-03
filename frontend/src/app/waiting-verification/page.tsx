@@ -7,8 +7,21 @@ export default function WaitingVerificationPage() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const handleRefresh = () => {
-    window.location.reload();
+  const handleRefresh = async () => {
+    if (session?.user?.email) {
+      try {
+        const res = await fetch(`http://localhost:8000/check-status/${session.user.email}`);
+        const data = await res.json();
+        if (data.verified) {
+          router.push('/dashboard');
+        } else {
+          alert("Account not verified yet.");
+        }
+      } catch (error) {
+        console.error('Error checking verification:', error);
+        alert("Error checking verification status.");
+      }
+    }
   };
 
   return (
