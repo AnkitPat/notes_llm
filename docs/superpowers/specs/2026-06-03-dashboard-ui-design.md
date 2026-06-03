@@ -16,14 +16,18 @@ This will be the main entry point for the dashboard, orchestrating the layout an
 ### 3.2. Left Panel Components
 
 #### 3.2.1. `ResourceNavigation.tsx`
-- **Purpose:** Displays a list of resource types (Documents, Links, Notes) and the individual resources within each type.
+- **Purpose:** Displays a list of resource types (Categories) and the individual resources within each type, with clear visual separation.
 - **Data:**
     - `resourceTypes`: An array of strings (e.g., ["Documents", "Links", "Notes"]).
     - `resources`: An array of resource objects (see Dummy Data for structure).
+- **Structure:**
+    - **Top Section (Categories):** Features large, clickable "cards" for "All Resources", "Documents", "Links", and "Notes". Each card displays the category name and an item count.
+    - **Divider:** A prominent horizontal line separates categories from the specific list.
+    - **Bottom Section (Resource List):** Displays the scrollable list of resource titles filtered by the selected category.
 - **Functionality:**
-    - Allows selection of a resource type to filter the displayed resources.
-    - Allows selection of an individual resource to display its content in the right panel.
-- **Styling:** Vertical list, clear indication of selected type/resource.
+    - Selecting a category card updates the filter and highlights the active card.
+    - Selecting an individual resource highlights it and updates the right panel.
+- **Styling:** Vertical layout, card-based category buttons with distinct active states, subtle divider, and a clean resource list.
 
 #### 3.2.2. `AddResourceButton.tsx` (or integrated into `ResourceNavigation`)
 - **Purpose:** Provides an interface to add a new dummy resource.
