@@ -9,13 +9,16 @@ import dummyResources from '@/lib/dummy-data/resources';
 import dummyChatResponses from '@/lib/dummy-data/chat';
 import { Resource, ChatMessage, ResourceType } from '@/types/dashboard';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
+import { uploadDocument } from '@/lib/api';
 
 const DashboardPage: React.FC = () => {
+  const { data: session } = useSession();
   const [resources, setResources] = useState<Resource[]>(dummyResources);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   
   const handleSelectResource = (resource: Resource) => {
     setSelectedResource(resource);
@@ -45,6 +48,31 @@ const DashboardPage: React.FC = () => {
     setSelectedResource(newResource);
   };
 
+  const handleUploadDocument = async (file: File) => {
+    if (!session?.user?.email) {
+      alert('You must be logged in to upload documents');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const result = await uploadDocument(file, session.user.email);
+      const newResource: Resource = {
+        id: result.id,
+        type: 'Document',
+        title: result.title,
+        content: result.webViewLink,
+      };
+      setResources((prevResources) => [...prevResources, newResource]);
+      setSelectedResource(newResource);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Upload failed. Please check backend connection and Google credentials.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSendMessage = (message: string) => {
     const newUserMessage: ChatMessage = { role: 'user', message };
     setMessages((prevHistory) => [...prevHistory, newUserMessage]);
@@ -72,6 +100,8 @@ const DashboardPage: React.FC = () => {
             selectedResource={selectedResource}
             onSelectResource={handleSelectResource}
             onAddResource={handleAddResource}
+            onUploadDocument={handleUploadDocument}
+            isUploading={isUploading}
           />
         </div>
 
