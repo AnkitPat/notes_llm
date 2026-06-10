@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Layout Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .panel { height: 100vh; overflow: hidden; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar (30%) -->
+        <div class="w-[30%] bg-slate-900 text-white p-4 flex flex-col">
+            <h1 class="text-xl font-bold mb-8">NotebookLLM</h1>
+            <div class="space-y-4">
+                <div class="p-3 bg-slate-800 rounded-lg border border-slate-700">All Resources</div>
+                <div class="p-3 bg-slate-800 rounded-lg border border-slate-700">Documents</div>
+            </div>
+            <div class="mt-8 border-t border-slate-700 pt-4">
+                <div class="text-sm text-slate-400 mb-2 uppercase tracking-widest">Recent Resources</div>
+                <div class="p-2 bg-blue-600 rounded text-sm mb-1 cursor-pointer">Introduction to AI.pdf</div>
+                <div class="p-2 hover:bg-slate-800 rounded text-sm mb-1 cursor-pointer">Note: Research paper</div>
+            </div>
+        </div>
+
+        <!-- Main Content Area (70%) -->
+        <div class="w-[70%] flex flex-col p-6 overflow-hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-semibold" id="title">View 1: Resource Selected</h2>
+                <div class="space-x-2">
+                    <button class="px-4 py-2 bg-white border rounded shadow-sm text-sm">Logout</button>
+                </div>
+            </div>
+
+            <div id="layout-container" class="flex-1 flex gap-4 overflow-hidden">
+                <!-- Document Viewer -->
+                <div id="viewer" class="flex-1 bg-white rounded-xl shadow flex flex-col overflow-hidden border border-gray-200">
+                    <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+                        <span class="font-medium">Introduction to AI.pdf</span>
+                        <button onclick="toggleExpand()" class="p-1.5 hover:bg-gray-200 rounded transition-colors" title="Toggle Expand">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-8 text-gray-700 flex-1 overflow-y-auto leading-relaxed">
+                        <h1 class="text-3xl font-bold mb-4">Artificial Intelligence</h1>
+                        <p class="mb-4 text-lg text-gray-600">Overview of machine learning and neural networks.</p>
+                        <hr class="my-6">
+                        <p class="mb-4">Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to the natural intelligence displayed by animals including humans.</p>
+                        <p class="mb-4">AI applications include advanced web search engines (e.g., Google Search), recommendation systems (used by YouTube, Amazon, and Netflix), understanding human speech (such as Siri and Alexa), self-driving cars (e.g., Waymo), generative or creative tools (ChatGPT and AI art), and competing at the highest level in strategic game systems (such as chess and Go).</p>
+                        <p class="mb-4">As machines become increasingly capable, tasks considered to require "intelligence" are often removed from the definition of AI, a phenomenon known as the AI effect. For instance, optical character recognition is frequently excluded from things considered to be AI, having become a routine technology.</p>
+                    </div>
+                </div>
+
+                <!-- Chat Section -->
+                <div id="chat" class="w-1/3 bg-white rounded-xl shadow flex flex-col overflow-hidden border border-gray-200">
+                    <div class="p-4 border-b font-medium bg-gray-50 flex justify-between items-center">
+                        <span>Chat</span>
+                        <button id="remove-resource" onclick="setView(3)" class="text-xs text-red-500 hover:text-red-700 font-semibold" title="Remove selected resource">Remove Resource</button>
+                    </div>
+                    <div class="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50/50">
+                        <div class="flex justify-start">
+                            <div class="bg-white border p-3 rounded-2xl rounded-tl-none text-sm max-w-[85%] shadow-sm">How can I help you with this document?</div>
+                        </div>
+                        <div class="flex justify-end">
+                            <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-none text-sm max-w-[85%] shadow-sm">Summarize the first paragraph.</div>
+                        </div>
+                        <div class="flex justify-start">
+                            <div class="bg-white border p-3 rounded-2xl rounded-tl-none text-sm max-w-[85%] shadow-sm leading-relaxed">AI is machine intelligence that mimics natural human intelligence, used in search engines, recommendation systems, and speech recognition.</div>
+                        </div>
+                    </div>
+                    <div class="p-4 border-t bg-white">
+                        <div class="flex gap-2 bg-gray-100 p-1 rounded-lg border focus-within:ring-2 ring-blue-500 transition-all">
+                            <input type="text" class="flex-1 bg-transparent px-3 py-2 text-sm focus:outline-none" placeholder="Ask anything...">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 flex bg-white/90 backdrop-blur shadow-2xl rounded-2xl border p-1.5 gap-1">
+        <button onclick="setView(1)" id="btn-1" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-slate-900 text-white">1. Split View</button>
+        <button onclick="setView(2)" id="btn-2" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-gray-100">2. Expanded View</button>
+        <button onclick="setView(3)" id="btn-3" class="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-gray-100">3. Chat Only</button>
+    </div>
+
+    <script>
+        function setView(view) {
+            const viewer = document.getElementById('viewer');
+            const chat = document.getElementById('chat');
+            const title = document.getElementById('title');
+            const removeBtn = document.getElementById('remove-resource');
+            
+            // Reset buttons
+            [1, 2, 3].forEach(i => {
+                const btn = document.getElementById('btn-' + i);
+                btn.className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:bg-gray-100";
+            });
+            document.getElementById('btn-' + view).className = "px-5 py-2.5 rounded-xl text-sm font-semibold transition-all bg-slate-900 text-white";
+
+            if (view === 1) {
+                title.innerText = "Resource Selected";
+                viewer.style.display = "flex";
+                chat.style.display = "flex";
+                chat.style.width = "33%";
+                removeBtn.style.display = "block";
+            } else if (view === 2) {
+                title.innerText = "Expanded Viewer";
+                viewer.style.display = "flex";
+                chat.style.display = "none";
+            } else if (view === 3) {
+                title.innerText = "Chat Only (Welcome / No Resource)";
+                viewer.style.display = "none";
+                chat.style.display = "flex";
+                chat.style.width = "100%";
+                removeBtn.style.display = "none";
+            }
+        }
+
+        function toggleExpand() {
+            const chat = document.getElementById('chat');
+            if (chat.style.display === 'none') {
+                setView(1);
+            } else {
+                setView(2);
+            }
+        }
+        
+        // Initialize
+        setView(1);
+    </script>
+</body>
+</html>
