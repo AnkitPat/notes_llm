@@ -4,9 +4,10 @@ import { Resource } from '../types/dashboard';
 
 interface ResourceContentDisplayProps {
   selectedResource: Resource | null;
+  onRemoveResource: () => void;
 }
 
-const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selectedResource }) => {
+const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selectedResource, onRemoveResource }) => {
   if (!selectedResource) {
     return null;
   }
@@ -14,8 +15,6 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
   const renderContent = () => {
     switch (selectedResource.type) {
       case 'Document':
-        // For simplicity, directly rendering markdown-like content.
-        // In a real app, you might use a markdown renderer component.
         return (
           <div className="prose lg:prose-xl">
             <h1>{selectedResource.title}</h1>
@@ -49,8 +48,17 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
   };
 
   return (
-    <div className="p-4 bg-gray-50 rounded-lg shadow-inner h-full overflow-y-auto">
-      {renderContent()}
+    <div className="flex flex-col h-full bg-gray-50 rounded-lg shadow-inner overflow-hidden">
+      <div className="flex justify-between items-center p-4 border-b border-gray-200">
+        <h2 className="font-bold text-lg text-gray-800">Viewer</h2>
+        <button
+          onClick={onRemoveResource}
+          className="text-xs text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1 rounded border border-red-200 transition-colors"
+        >
+          Remove Resource
+        </button>
+      </div>
+      <div className="flex-grow overflow-y-auto p-4">{renderContent()}</div>
     </div>
   );
 };

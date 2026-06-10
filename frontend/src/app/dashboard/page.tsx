@@ -1,7 +1,7 @@
 // frontend/src/app/dashboard/page.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ResourceNavigation from '@/components/ResourceNavigation';
 import ResourceContentDisplay from '@/components/ResourceContentDisplay';
 import ChatQnASection from '@/components/ChatQnASection';
@@ -14,18 +14,23 @@ import { signOut } from 'next-auth/react';
 const DashboardPage: React.FC = () => {
   const [resources, setResources] = useState<Resource[]>(dummyResources);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-
-  useEffect(() => {
-    if (selectedResource) {
-      setChatHistory(dummyChatResponses[selectedResource.id] || []);
-    } else {
-      setChatHistory([]);
-    }
-  }, [selectedResource]);
-
+  const [isChatExpanded, setIsChatExpanded] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  
   const handleSelectResource = (resource: Resource) => {
     setSelectedResource(resource);
+    setIsChatExpanded(false); // Reset expansion on new resource selection
+    setMessages(dummyChatResponses[resource.id] || []);
+  };
+
+  const handleRemoveResource = () => {
+    setSelectedResource(null);
+    setIsChatExpanded(false);
+    setMessages([]); // Reset history when removing resource
+  };
+
+  const handleToggleChatExpand = () => {
+    setIsChatExpanded(!isChatExpanded);
   };
 
   const handleAddResource = (type: ResourceType, title: string, content: string) => {
@@ -41,10 +46,10 @@ const DashboardPage: React.FC = () => {
   };
 
   const handleSendMessage = (message: string) => {
-    if (!selectedResource) return;
-
     const newUserMessage: ChatMessage = { role: 'user', message };
-    setChatHistory((prevHistory) => [...prevHistory, newUserMessage]);
+    setMessages((prevHistory) => [...prevHistory, newUserMessage]);
+
+    if (!selectedResource) return;
 
     // Simulate AI response
     setTimeout(() => {
@@ -52,9 +57,10 @@ const DashboardPage: React.FC = () => {
         role: 'ai',
         message: `AI's dummy response to: "${message}" about "${selectedResource.title}".`,
       };
-      setChatHistory((prevHistory) => [...prevHistory, aiResponse]);
+      setMessages((prevHistory) => [...prevHistory, aiResponse]);
     }, 1000);
   };
+
 
   return (
     <ProtectedRoute>
@@ -83,13 +89,38 @@ const DashboardPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex-grow bg-white rounded-lg shadow mb-6 overflow-hidden flex flex-col">
-            <div className="flex-grow overflow-y-auto">
-              <ResourceContentDisplay selectedResource={selectedResource} />
+          <div className="flex-grow flex gap-6 overflow-hidden">
+            {selectedResource && (
+              <div
+                className={`bg-white rounded-lg shadow mb-6 overflow-hidden flex flex-col ${
+                  isChatExpanded ? 'flex-1' : 'flex-[2]'
+                } transition-all duration-300`}
+              >
+                <div className="flex-grow overflow-y-auto">
+                  <ResourceContentDisplay
+                    selectedResource={selectedResource}
+                    onRemoveResource={handleRemoveResource}
+                  />
+                </div>
+              </div>
+            )}
+            <div
+              className={`bg-white rounded-lg shadow mb-6 overflow-hidden flex flex-col ${
+                selectedResource
+                  ? isChatExpanded
+                    ? 'flex-[3]'
+                    : 'flex-1'
+                  : 'flex-1'
+              } transition-all duration-300`}
+            >
+              <ChatQnASection
+                chatHistory={messages}
+                onSendMessage={handleSendMessage}
+                isChatExpanded={isChatExpanded}
+                onToggleChatExpand={handleToggleChatExpand}
+                chatMode={selectedResource ? 'Resource Chat' : 'All Resource Chat'}
+              />
             </div>
-          </div>
-          <div className="h-1/3 bg-white rounded-lg shadow overflow-hidden flex flex-col">
-            <ChatQnASection chatHistory={chatHistory} onSendMessage={handleSendMessage} />
           </div>
         </div>
       </div>
