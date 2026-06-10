@@ -69,7 +69,8 @@ describe('DashboardPage', () => {
 
     expect(screen.getByTestId('protected-route')).toBeInTheDocument();
     expect(screen.getByTestId('mock-resource-navigation')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-resource-content-display')).toBeInTheDocument();
+    // Initially no resource selected, so content display is not rendered
+    expect(screen.queryByTestId('mock-resource-content-display')).not.toBeInTheDocument();
     expect(screen.getByTestId('mock-chat-qna-section')).toBeInTheDocument();
   });
 
@@ -77,7 +78,7 @@ describe('DashboardPage', () => {
     render(<DashboardPage />);
 
     // Initially no resource selected
-    expect(screen.getByTestId('mock-resource-content-display')).toHaveTextContent('None');
+    expect(screen.queryByTestId('mock-resource-content-display')).not.toBeInTheDocument();
 
     // Simulate selecting the first resource
     fireEvent.click(screen.getByRole('button', { name: /select first resource/i }));
