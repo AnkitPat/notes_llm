@@ -28,7 +28,8 @@ describe('ResourceNavigation', () => {
     expect(screen.getByText(/Doc 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Link 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Note 1/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /add resource/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /add note\/link/i })).toBeInTheDocument();
+    expect(screen.getByText(/upload pdf\/doc/i)).toBeInTheDocument();
   });
 
   it('filters resources by type when type is clicked', () => {
@@ -92,13 +93,13 @@ describe('ResourceNavigation', () => {
       />
     );
 
-    // Click "Add Resource" to show the form
-    fireEvent.click(screen.getByRole('button', { name: /add resource/i }));
+    // Click "Add Note/Link" to show the form
+    fireEvent.click(screen.getByRole('button', { name: /add note\/link/i }));
 
     // Fill the form
     const titleInput = screen.getByPlaceholderText('Resource Title');
     const typeSelect = screen.getByRole('combobox');
-    const contentTextarea = screen.getByPlaceholderText('Content (for Note/Document) or URL (for Link)');
+    const contentTextarea = screen.getByPlaceholderText('Enter Note content');
 
     fireEvent.change(titleInput, { target: { value: 'New Test Note' } });
     fireEvent.blur(titleInput);
