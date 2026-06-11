@@ -9,6 +9,8 @@ interface ResourceNavigationProps {
   selectedResource: Resource | null;
   onSelectResource: (resource: Resource) => void;
   onAddResource: (type: ResourceType, title: string, content: string) => void;
+  onUploadDocument: (file: File) => void;
+  isUploading?: boolean;
 }
 
 const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
@@ -16,6 +18,8 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
   selectedResource,
   onSelectResource,
   onAddResource,
+  onUploadDocument,
+  isUploading = false,
 }) => {
   const [filterType, setFilterType] = useState<ResourceType | 'All Resources'>('All Resources');
   const [showAddForm, setShowAddForm] = useState(false);
@@ -34,11 +38,17 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
   };
 
   const handleAddResource = () => {
-    if (newResourceTitle.trim() && newResourceContent.trim()) {
+    if (newResourceTitle.trim() && (newResourceContent.trim() || newResourceType === 'Document')) {
       onAddResource(newResourceType, newResourceTitle.trim(), newResourceContent.trim());
       setNewResourceTitle('');
       setNewResourceContent('');
       setShowAddForm(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      onUploadDocument(e.target.files[0]);
     }
   };
 
@@ -100,12 +110,25 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
       </div>
 
       <div className="mt-4 pt-4 border-t border-gray-700">
-        <button
-          className="bg-green-600 hover:bg-green-700 text-white py-2.5 px-4 rounded-xl w-full font-medium transition-colors"
-          onClick={() => setShowAddForm(!showAddForm)}
-        >
-          {showAddForm ? 'Cancel' : 'Add Resource'}
-        </button>
+        <div className="flex flex-col gap-2">
+           <label className={`bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-xl w-full font-medium transition-colors text-center cursor-pointer ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+             {isUploading ? 'Uploading...' : 'Upload PDF/Doc'}
+             <input 
+               type="file" 
+               className="hidden" 
+               onChange={handleFileChange} 
+               disabled={isUploading}
+               accept=".pdf,.doc,.docx,.txt"
+             />
+           </label>
+           
+           <button
+            className="bg-green-600 hover:bg-green-700 text-white py-2.5 px-4 rounded-xl w-full font-medium transition-colors"
+            onClick={() => setShowAddForm(!showAddForm)}
+          >
+            {showAddForm ? 'Cancel' : 'Add Note/Link'}
+          </button>
+        </div>
 
         {showAddForm && (
           <div className="mt-4 space-y-2 bg-gray-900 p-3 rounded-xl border border-gray-700">
@@ -122,11 +145,10 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
               onChange={(e) => setNewResourceType(e.target.value as ResourceType)}
             >
               <option value="Note">Note</option>
-              <option value="Document">Document</option>
               <option value="Link">Link</option>
             </select>
             <textarea
-              placeholder="Content (for Note/Document) or URL (for Link)"
+              placeholder={newResourceType === 'Link' ? 'Enter URL' : 'Enter Note content'}
               rows={3}
               className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
               value={newResourceContent}
