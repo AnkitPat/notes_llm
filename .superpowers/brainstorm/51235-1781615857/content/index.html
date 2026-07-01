@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes LLM - Refined MongoDB Schema</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .collection-card {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 1.5rem;
+            color: #e0e0e0;
+        }
+        .field-name { color: #9cdcfe; font-family: monospace; }
+        .field-type { color: #4ec9b0; font-family: monospace; font-size: 0.9em; }
+        .relation-arrow { color: #d4d4d4; font-size: 1.5rem; }
+    </style>
+</head>
+<body class="bg-black p-10 font-sans">
+    <h1 class="text-3xl font-bold text-white mb-8 border-b border-gray-800 pb-4">Refined Architecture: 1 Note → Many Resources</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        
+        <!-- Users Collection -->
+        <div class="collection-card">
+            <h2 class="text-xl font-semibold text-blue-400 mb-4 border-b border-gray-700 pb-2">users</h2>
+            <ul class="space-y-2">
+                <li><span class="field-name">_id</span>: <span class="field-type">ObjectId</span></li>
+                <li><span class="field-name">email</span>: <span class="field-type">string (unique)</span></li>
+                <li><span class="field-name">isVerified</span>: <span class="field-type">boolean</span></li>
+                <li><span class="field-name">createdAt</span>: <span class="field-type">Date</span></li>
+            </ul>
+        </div>
+
+        <div class="flex flex-col items-center justify-center h-full">
+            <div class="relation-arrow">→</div>
+            <div class="text-xs text-gray-500 mt-1">owns</div>
+        </div>
+
+        <!-- Notes Collection -->
+        <div class="collection-card">
+            <h2 class="text-xl font-semibold text-green-400 mb-4 border-b border-gray-700 pb-2">notes</h2>
+            <ul class="space-y-2">
+                <li><span class="field-name">_id</span>: <span class="field-type">ObjectId</span></li>
+                <li><span class="field-name">userId</span>: <span class="field-type">string (email)</span></li>
+                <li><span class="field-name">name</span>: <span class="field-type">string</span></li>
+                <li class="bg-blue-900/20 p-2 rounded border border-blue-800/50">
+                    <span class="field-name">resourceIds</span>: <span class="field-type">Array&lt;ObjectId&gt;</span>
+                </li>
+                <li><span class="field-name">updatedAt</span>: <span class="field-type">Date</span></li>
+            </ul>
+        </div>
+
+        <!-- Spacer -->
+        <div></div>
+        
+        <div class="flex flex-col items-center justify-center h-full">
+            <div class="relation-arrow">↓</div>
+            <div class="text-xs text-gray-500 mt-1">owns multiple</div>
+        </div>
+
+        <!-- Resources Collection -->
+        <div class="collection-card">
+            <h2 class="text-xl font-semibold text-yellow-400 mb-4 border-b border-gray-700 pb-2">resources</h2>
+            <ul class="space-y-2">
+                <li><span class="field-name">_id</span>: <span class="field-type">ObjectId</span></li>
+                <li><span class="field-name">noteId</span>: <span class="field-type">ObjectId (ref)</span></li>
+                <li><span class="field-name">name</span>: <span class="field-type">string (Optional label?)</span></li>
+                <li class="pl-4 border-l-2 border-gray-700 mt-4">
+                    <span class="field-name">documents</span>: <span class="field-type">Array&lt;Doc&gt;</span>
+                </li>
+                <li class="pl-4 border-l-2 border-gray-700">
+                    <span class="field-name">text</span>: <span class="field-type">Array&lt;Text&gt;</span>
+                </li>
+                <li class="pl-4 border-l-2 border-gray-700">
+                    <span class="field-name">links</span>: <span class="field-type">Array&lt;Link&gt;</span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="mt-12 p-6 bg-gray-900 border border-gray-800 rounded-lg space-y-6">
+        <div>
+            <h3 class="text-white font-bold mb-2">1. The "Many Resources" Purpose:</h3>
+            <p class="text-gray-300">In this design, a single Note (e.g., "Physics 101") can hold multiple Resource documents. How will these be organized in the UI? 
+                <br><b>A:</b> Different resource documents for different "Chapters" or "Sections" within the same note?
+                <br><b>B:</b> Each individual upload creates its own Resource document?
+            </p>
+        </div>
+
+        <div>
+            <h3 class="text-white font-bold mb-2">2. Chat History Persistence:</h3>
+            <p class="text-gray-300">When the user asks questions in the dashboard, should we persist that chat history?
+                <br><b>Option A:</b> Embed in Resources.
+                <br><b>Option B:</b> Separate 'conversations' collection.
+                <br><b>Option C:</b> No persistence (in-memory only).
+            </p>
+        </div>
+    </div>
+</body>
+</html>

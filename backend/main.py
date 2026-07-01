@@ -1,6 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import json
 import os
 from dotenv import load_dotenv
 
@@ -8,6 +7,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from utils.backblaze_b2 import BackblazeB2Helper
+from routes.users import router as users_router
+from routes.notes import router as notes_router
+from routes.resources import router as resources_router
 
 app = FastAPI()
 
@@ -19,7 +21,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DATA_FILE = "data/verified_users.json"
+app.include_router(users_router)
+app.include_router(notes_router)
+app.include_router(resources_router)
 
 # Initialize helper
 try:
@@ -27,14 +31,6 @@ try:
 except Exception as e:
     print(f"Error initializing Backblaze B2 Helper: {e}")
     drive_helper = None
-
-@app.get("/check-status/{email}")
-async def check_status(email: str):
-    if not os.path.exists(DATA_FILE):
-        return {"verified": False}
-    with open(DATA_FILE, "r") as f:
-        data = json.load(f)
-    return {"verified": email in data.get("verified_users", [])}
 
 @app.get("/presigned-url")
 async def get_presigned_url(file_path: str):
