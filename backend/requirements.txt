@@ -6,3 +6,4 @@ httpx
 pytest
 b2sdk
 python-dotenv
+motor
