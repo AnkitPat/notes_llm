@@ -13,6 +13,14 @@ class NoteCreate(BaseModel):
 class NoteUpdate(BaseModel):
     resourceIds: List[str]
 
+@router.get("/notes/{note_id}")
+async def get_note(note_id: str):
+    note = await db.notes.find_one({"_id": ObjectId(note_id)})
+    if note:
+        note["_id"] = str(note["_id"])
+        return note
+    return {"error": "Note not found"}, 404
+
 @router.get("/notes")
 async def get_notes(email: str):
     cursor = db.notes.find({"userId": email})

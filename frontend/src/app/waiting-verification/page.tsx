@@ -13,7 +13,7 @@ export default function WaitingVerificationPage() {
         const res = await fetch(`http://localhost:8000/check-status/${session.user.email}`);
         const data = await res.json();
         if (data.verified) {
-          router.push('/dashboard');
+          router.push('/');
         } else {
           alert("Account not verified yet.");
         }
