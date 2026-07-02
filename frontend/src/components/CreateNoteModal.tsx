@@ -1,5 +1,11 @@
 'use client';
 import { useState } from 'react';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
 
 interface CreateNoteModalProps {
   isOpen: boolean;
@@ -11,8 +17,6 @@ export function CreateNoteModal({ isOpen, onClose, onCreate }: CreateNoteModalPr
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,31 +34,29 @@ export function CreateNoteModal({ isOpen, onClose, onCreate }: CreateNoteModalPr
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
-        <h2 className="text-xl font-bold mb-4">Create New Note</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+    <Modal open={isOpen} onClose={onClose} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ bgcolor: 'background.paper', p: 4, borderRadius: 2, boxShadow: 24, width: '100%', maxWidth: 400 }}>
+        <Typography variant="h6" component="h2" gutterBottom>
+          Create New Note
+        </Typography>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
+          <TextField
+            fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mb-4"
-            placeholder="Note Name"
+            label="Note Name"
+            margin="normal"
             required
           />
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-gray-600">Cancel</button>
-            <button 
-                type="submit" 
-                className={`px-4 py-2 text-white rounded ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500'}`} 
-                disabled={isLoading}
-            >
+          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+            <Button onClick={onClose}>Cancel</Button>
+            <Button type="submit" variant="contained" disabled={isLoading}>
               {isLoading ? 'Creating...' : 'Create'}
-            </button>
-          </div>
+            </Button>
+          </Box>
         </form>
-      </div>
-    </div>
+      </Box>
+    </Modal>
   );
 }
