@@ -10,7 +10,14 @@ export async function GET(request: Request) {
 
   try {
     // Call the backend /verify endpoint
-    const response = await fetch(`http://localhost:8000/verify?email=${encodeURIComponent(email)}`);
+    const response = await fetch(`http://localhost:8000/admin/verify-user`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({email})
+    });
     
     if (!response.ok) {
       throw new Error('Failed to verify user on backend');

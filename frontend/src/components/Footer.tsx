@@ -1,11 +1,15 @@
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+
 export default function Footer() {
   return (
-    <footer className="bg-gray-50 border-t">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <p className="text-center text-sm text-gray-500">
+    <Box component="footer" sx={{ bgcolor: 'white', borderTop: 1, borderColor: 'divider', py: 6 }}>
+      <Container maxWidth="lg">
+        <Typography variant="body2" color="text.secondary" align="center">
           &copy; {new Date().getFullYear()} Notes LLM. All rights reserved.
-        </p>
-      </div>
-    </footer>
+        </Typography>
+      </Container>
+    </Box>
   );
 }
