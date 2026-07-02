@@ -1,25 +1,28 @@
 import Link from 'next/link';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import MuiLink from '@mui/material/Link';
 
 export default function Navbar() {
   return (
-    <nav className="border-b bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between items-center">
-          <div className="flex-shrink-0">
-            <Link href="/" className="text-xl font-bold text-blue-600">
-              Notes LLM
-            </Link>
-          </div>
-          <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-            <Link href="/" className="text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium">
-              Home
-            </Link>
-            <Link href="/notes" className="text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium">
-              Notes
-            </Link>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <AppBar position="static" color="default" elevation={1} sx={{ bgcolor: 'white' }}>
+      <Toolbar>
+        <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+          <MuiLink component={Link} href="/" sx={{ textDecoration: 'none', color: 'primary.main', fontSize: '1.25rem', fontWeight: 'bold' }}>
+            Notes LLM
+          </MuiLink>
+        </Box>
+        <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 2 }}>
+          <MuiLink component={Link} href="/" sx={{ color: 'text.primary', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 'medium' }}>
+            Home
+          </MuiLink>
+          <MuiLink component={Link} href="/notes" sx={{ color: 'text.secondary', textDecoration: 'none', fontSize: '0.875rem', fontWeight: 'medium', '&:hover': { color: 'text.primary' } }}>
+            Notes
+          </MuiLink>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
