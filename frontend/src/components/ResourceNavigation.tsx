@@ -1,7 +1,19 @@
-// frontend/src/components/ResourceNavigation.tsx
 'use client';
 
 import React, { useState } from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid2';
 import { Resource, ResourceType } from '../types/dashboard';
 
 interface ResourceNavigationProps {
@@ -52,118 +64,84 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
     }
   };
 
+  const categories = ['All Resources', 'Document', 'Link', 'Note'] as const;
+
   return (
-    <div className="flex flex-col h-full bg-gray-800 text-white p-4">
-      <h2 className="text-xl font-bold mb-6">Notebook LLM</h2>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', bgcolor: 'grey.900', color: 'white', p: 2 }}>
+      <Typography variant="h6" fontWeight="bold" sx={{ mb: 3 }}>Notebook LLM</Typography>
 
-      {/* Top Section - Category Cards */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        <button
-          className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
-            filterType === 'All Resources'
-              ? 'bg-blue-600 border-blue-400'
-              : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
-          }`}
-          onClick={() => setFilterType('All Resources')}
-        >
-          <span className="text-xs font-semibold uppercase tracking-wider opacity-80">All Resources</span>
-          <span className="text-xl font-bold">{getCount('All Resources')}</span>
-        </button>
-        {(['Document', 'Link', 'Note'] as ResourceType[]).map((type) => (
-          <button
-            key={type}
-            className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
-              filterType === type
-                ? 'bg-blue-600 border-blue-400'
-                : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
-            }`}
-            onClick={() => setFilterType(type)}
-          >
-            <span className="text-xs font-semibold uppercase tracking-wider opacity-80">{type}s</span>
-            <span className="text-xl font-bold">{getCount(type)}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="border-t border-gray-700 mb-6"></div>
-
-      {/* Bottom Section - Resource List */}
-      <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-3 px-2">
-        {filterType === 'All Resources' ? 'Recent Resources' : `${filterType} List`}
-      </h3>
-      <div className="flex-grow overflow-y-auto pr-2">
-        <ul className="space-y-1">
-          {filteredResources.map((resource) => (
-            <li
-              key={resource.id}
-              className={`cursor-pointer py-2 px-3 rounded-lg transition-colors ${
-                selectedResource?.id === resource.id
-                  ? 'bg-gray-700 text-blue-400 font-medium'
-                  : 'hover:bg-gray-700 text-gray-300'
-              }`}
-              onClick={() => onSelectResource(resource)}
+      <Grid container spacing={1} sx={{ mb: 3 }}>
+        {categories.map((type) => (
+          <Grid key={type} size={6}>
+            <Card
+              sx={{
+                bgcolor: filterType === type ? 'primary.main' : 'grey.800',
+                color: 'white',
+                textAlign: 'center',
+                transition: 'all 0.2s',
+              }}
             >
-              {resource.title}
-            </li>
-          ))}
-        </ul>
-      </div>
+              <CardActionArea onClick={() => setFilterType(type as any)}>
+                <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                  <Typography variant="caption" sx={{ display: 'block', textTransform: 'uppercase', opacity: 0.8 }}>
+                    {type === 'All Resources' ? type : `${type}s`}
+                  </Typography>
+                  <Typography variant="h6" fontWeight="bold">{getCount(type as any)}</Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
 
-      <div className="mt-4 pt-4 border-t border-gray-700">
-        <div className="flex flex-col gap-2">
-           <label className={`bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-xl w-full font-medium transition-colors text-center cursor-pointer ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
-             {isUploading ? 'Uploading...' : 'Upload PDF/Doc'}
-             <input 
-               type="file" 
-               className="hidden" 
-               onChange={handleFileChange} 
-               disabled={isUploading}
-               accept=".pdf,.doc,.docx,.txt"
-             />
-           </label>
-           
-           <button
-            className="bg-green-600 hover:bg-green-700 text-white py-2.5 px-4 rounded-xl w-full font-medium transition-colors"
-            onClick={() => setShowAddForm(!showAddForm)}
+      <Divider sx={{ borderColor: 'grey.700', mb: 3 }} />
+
+      <Typography variant="subtitle2" sx={{ color: 'grey.400', mb: 1, textTransform: 'uppercase', px: 1 }}>
+        {filterType === 'All Resources' ? 'Recent Resources' : `${filterType} List`}
+      </Typography>
+      <List sx={{ flexGrow: 1, overflowY: 'auto', p: 0 }}>
+        {filteredResources.map((resource) => (
+          <ListItemButton
+            key={resource.id}
+            selected={selectedResource?.id === resource.id}
+            onClick={() => onSelectResource(resource)}
+            sx={{ borderRadius: 1, mb: 0.5, '&.Mui-selected': { bgcolor: 'grey.700', color: 'primary.light' } }}
           >
+            <ListItemText primary={resource.title} />
+          </ListItemButton>
+        ))}
+      </List>
+
+      <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'grey.700' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Button
+            component="label"
+            variant="contained"
+            disabled={isUploading}
+            fullWidth
+            sx={{ py: 1 }}
+          >
+            {isUploading ? 'Uploading...' : 'Upload PDF/Doc'}
+            <input type="file" hidden onChange={handleFileChange} accept=".pdf,.doc,.docx,.txt" />
+          </Button>
+          <Button variant="contained" color="success" fullWidth onClick={() => setShowAddForm(!showAddForm)}>
             {showAddForm ? 'Cancel' : 'Add Note/Link'}
-          </button>
-        </div>
+          </Button>
+        </Box>
 
         {showAddForm && (
-          <div className="mt-4 space-y-2 bg-gray-900 p-3 rounded-xl border border-gray-700">
-            <input
-              type="text"
-              placeholder="Resource Title"
-              className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
-              value={newResourceTitle}
-              onChange={(e) => setNewResourceTitle(e.target.value)}
-            />
-            <select
-              className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
-              value={newResourceType}
-              onChange={(e) => setNewResourceType(e.target.value as ResourceType)}
-            >
-              <option value="Note">Note</option>
-              <option value="Link">Link</option>
-            </select>
-            <textarea
-              placeholder={newResourceType === 'Link' ? 'Enter URL' : 'Enter Note content'}
-              rows={3}
-              className="w-full p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-blue-500"
-              value={newResourceContent}
-              onChange={(e) => setNewResourceContent(e.target.value)}
-            ></textarea>
-            <button
-              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg w-full font-bold"
-              onClick={handleAddResource}
-            >
-              Create Resource
-            </button>
-          </div>
+          <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.950', borderRadius: 1, border: 1, borderColor: 'grey.700' }}>
+            <TextField fullWidth size="small" placeholder="Title" value={newResourceTitle} onChange={(e) => setNewResourceTitle(e.target.value)} sx={{ mb: 1, input: { color: 'white' } }} />
+            <TextField select fullWidth size="small" value={newResourceType} onChange={(e) => setNewResourceType(e.target.value as ResourceType)} sx={{ mb: 1, input: { color: 'white' } }}>
+              <MenuItem value="Note">Note</MenuItem>
+              <MenuItem value="Link">Link</MenuItem>
+            </TextField>
+            <TextField fullWidth size="small" placeholder={newResourceType === 'Link' ? 'Enter URL' : 'Enter Note'} multiline rows={3} value={newResourceContent} onChange={(e) => setNewResourceContent(e.target.value)} sx={{ mb: 1, input: { color: 'white' } }} />
+            <Button variant="contained" fullWidth onClick={handleAddResource}>Create</Button>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
