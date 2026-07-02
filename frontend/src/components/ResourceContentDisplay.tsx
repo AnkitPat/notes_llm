@@ -1,5 +1,10 @@
-// frontend/src/components/ResourceContentDisplay.tsx
 import React from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
 import { Resource } from '../types/dashboard';
 
 interface ResourceContentDisplayProps {
@@ -15,51 +20,50 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
   const renderContent = () => {
     switch (selectedResource.type) {
       case 'Document':
+      case 'Note':
         return (
-          <div className="prose lg:prose-xl">
-            <h1>{selectedResource.title}</h1>
-            <div dangerouslySetInnerHTML={{ __html: selectedResource.content.replace(/\\n/g, '<br />') }} />
-          </div>
+          <Box>
+            <Typography variant="h4" component="h1" gutterBottom>
+              {selectedResource.title}
+            </Typography>
+            <Typography
+              variant="body1"
+              component="div"
+              dangerouslySetInnerHTML={{ __html: selectedResource.content.replace(/\\n/g, '<br />') }}
+            />
+          </Box>
         );
       case 'Link':
         return (
-          <div>
-            <h1 className="text-2xl font-bold mb-2">{selectedResource.title}</h1>
-            <a
-              href={selectedResource.content}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
+          <Box>
+            <Typography variant="h5" component="h1" gutterBottom>
+              {selectedResource.title}
+            </Typography>
+            <Link href={selectedResource.content} target="_blank" rel="noopener noreferrer">
               {selectedResource.content}
-            </a>
-          </div>
-        );
-      case 'Note':
-        return (
-          <div className="prose lg:prose-xl">
-            <h1 className="text-2xl font-bold mb-2">{selectedResource.title}</h1>
-            <p dangerouslySetInnerHTML={{ __html: selectedResource.content.replace(/\\n/g, '<br />') }} />
-          </div>
+            </Link>
+          </Box>
         );
       default:
-        return <p>Unknown resource type.</p>;
+        return <Typography>Unknown resource type.</Typography>;
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 rounded-lg shadow-inner overflow-hidden">
-      <div className="flex justify-between items-center p-4 border-b border-gray-200">
-        <h2 className="font-bold text-lg text-gray-800">Viewer</h2>
-        <button
+    <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%', bgcolor: 'grey.50', boxShadow: 'inset 0 0 4px rgba(0,0,0,0.1)' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: 1, borderColor: 'divider' }}>
+        <Typography variant="h6" fontWeight="bold">Viewer</Typography>
+        <Button
           onClick={onRemoveResource}
-          className="text-xs text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1 rounded border border-red-200 transition-colors"
+          variant="outlined"
+          color="error"
+          size="small"
         >
           Remove Resource
-        </button>
-      </div>
-      <div className="flex-grow overflow-y-auto p-4">{renderContent()}</div>
-    </div>
+        </Button>
+      </Box>
+      <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 3 }}>{renderContent()}</Box>
+    </Paper>
   );
 };
 
