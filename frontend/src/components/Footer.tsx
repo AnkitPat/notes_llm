@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 
 export default function Footer() {
   return (
-    <Box component="footer" sx={{ bgcolor: 'white', borderTop: 1, borderColor: 'divider', py: 6 }}>
+    <Box component="footer" sx={{ bgcolor: 'white', borderTop: 1, borderColor: 'divider', py: 2 }}>
       <Container maxWidth="lg">
         <Typography variant="body2" color="text.secondary" align="center">
           &copy; {new Date().getFullYear()} Notes LLM. All rights reserved.

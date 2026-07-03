@@ -11,13 +11,13 @@ import { signOut } from 'next-auth/react';
 import { uploadDocument } from '@/lib/api';
 
 interface NoteDetailPageProps {
-  params: {
+  params: Promise<{
     note_id: string;
-  };
+  }>;
 }
 
 const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
-  const { note_id } = params;
+  const { note_id } = React.use(params);
   const [noteName, setNoteName] = useState<string>('Loading...');
   
   const [resources, setResources] = useState<Resource[]>([]);
@@ -98,46 +98,37 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
             />
             </div>
 
-            {/* Right Panel - Content Display and Chat */}
+            {/* Right Panel - Content Display and Permanent Chat */}
             <div className="w-[70%] flex flex-col p-6 overflow-hidden">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-900">{noteName}</h1>
             </div>
 
-            <div className="flex-grow flex gap-6 overflow-hidden">
-                {selectedResource ? (
-                    <>
-                        <div
-                            className={`bg-white rounded-lg shadow mb-6 overflow-hidden flex flex-col ${
-                            isChatExpanded ? 'flex-1' : 'flex-[2]'
-                            } transition-all duration-300`}
-                        >
-                            <div className="flex-grow overflow-y-auto">
-                            <ResourceContentDisplay
-                                selectedResource={selectedResource}
-                                onRemoveResource={handleRemoveResource}
-                            />
-                            </div>
+            <div className="flex-grow flex flex-row gap-6 overflow-hidden">
+                {/* Conditional Content Area */}
+                <div className="flex-1 bg-white rounded-lg shadow overflow-hidden">
+                    {selectedResource ? (
+                        <ResourceContentDisplay
+                            selectedResource={selectedResource}
+                            onRemoveResource={handleRemoveResource}
+                        />
+                    ) : (
+                        <div className=" flex items-center justify-center h-full">
+                            <p className="text-gray-500">Select a resource to view details.</p>
                         </div>
-                        <div
-                            className={`bg-white rounded-lg shadow mb-6 overflow-hidden flex flex-col ${
-                            isChatExpanded ? 'flex-[3]' : 'flex-1'
-                            } transition-all duration-300`}
-                        >
-                            <ChatQnASection
-                            chatHistory={messages}
-                            onSendMessage={handleSendMessage}
-                            isChatExpanded={isChatExpanded}
-                            onToggleChatExpand={handleToggleChatExpand}
-                            chatMode='Resource Chat'
-                            />
-                        </div>
-                    </>
-                ) : (
-                    <div className="flex-1 flex items-center justify-center bg-white rounded-lg shadow">
-                        <p className="text-gray-500">Select a resource to view details and chat.</p>
-                    </div>
-                )}
+                    )}
+                </div>
+
+                {/* Permanent Chat Area */}
+                <div className="h-full flex-1 bg-white rounded-lg shadow overflow-hidden">
+                    <ChatQnASection
+                        chatHistory={messages}
+                        onSendMessage={handleSendMessage}
+                        isChatExpanded={isChatExpanded}
+                        onToggleChatExpand={handleToggleChatExpand}
+                        chatMode={selectedResource ? 'Resource Chat' : 'General Chat'}
+                    />
+                </div>
             </div>
             </div>
         </div>

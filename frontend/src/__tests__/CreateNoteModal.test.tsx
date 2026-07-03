@@ -12,7 +12,7 @@ describe('CreateNoteModal', () => {
     const onCreate = vi.fn().mockResolvedValue(undefined);
     render(<CreateNoteModal isOpen={true} onClose={() => {}} onCreate={onCreate} />);
     
-    fireEvent.change(screen.getByPlaceholderText('Note Name'), { target: { value: 'New Note' } });
+    fireEvent.change(screen.getByLabelText('Note Name *'), { target: { value: 'New Note' } });
     fireEvent.click(screen.getByText('Create'));
     
     await waitFor(() => {

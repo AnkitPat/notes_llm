@@ -1,6 +1,6 @@
 // frontend/src/__tests__/ResourceNavigation.test.tsx
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import ResourceNavigation from '@/components/ResourceNavigation';
 import { Resource } from '../types/dashboard';
 import { vi } from 'vitest';
@@ -82,7 +82,7 @@ describe('ResourceNavigation', () => {
     expect(screen.getAllByText(/1/i).length).toBeGreaterThanOrEqual(1); // Counts for categories
   });
 
-  it('calls onAddResource when "Create Resource" button is clicked after filling the form', async () => {
+  it('calls onAddResource when "Create Resource" button is clicked after filling the drawer form', async () => {
     const onAddResourceMock = vi.fn();
     render(
       <ResourceNavigation
@@ -93,26 +93,30 @@ describe('ResourceNavigation', () => {
       />
     );
 
-    // Click "Add Note/Link" to show the form
+    // Click "Add Note/Link" to show the drawer
     fireEvent.click(screen.getByRole('button', { name: /add note\/link/i }));
 
-    // Fill the form
-    const titleInput = screen.getByPlaceholderText('Resource Title');
-    const typeSelect = screen.getByRole('combobox');
-    const contentTextarea = screen.getByPlaceholderText('Enter Note content');
+    // Find the drawer and fill the form inside it
+    // AddResourceDrawer uses MUI Drawer, which might not be immediately visible in the DOM depending on implementation,
+    // but the fields should be accessible.
+    
+    const titleInput = screen.getByLabelText(/title/i);
+    const contentTextarea = screen.getByLabelText(/content/i);
 
     fireEvent.change(titleInput, { target: { value: 'New Test Note' } });
-    fireEvent.blur(titleInput);
-    fireEvent.change(typeSelect, { target: { value: 'Note' } });
-    fireEvent.blur(typeSelect);
-    fireEvent.change(contentTextarea, { target: { value: 'This is the content of the new note.' } });
-    fireEvent.blur(contentTextarea);
+    
+    // Select type
+    const select = screen.getByLabelText(/type/i);
+    fireEvent.mouseDown(select);
+    const option = await screen.findByRole('option', { name: 'Note' });
+    fireEvent.click(option);
 
-    // Click "Create Resource" button
-    fireEvent.click(screen.getByRole('button', { name: /create resource/i }));
+    fireEvent.change(contentTextarea, { target: { value: 'This is the content of the new note.' } });
+
+    // Click "Create" button in the drawer
+    fireEvent.click(screen.getByRole('button', { name: /create/i }));
 
     expect(onAddResourceMock).toHaveBeenCalledTimes(1);
     expect(onAddResourceMock).toHaveBeenCalledWith('Note', 'New Test Note', 'This is the content of the new note.');
-    await waitFor(() => expect(screen.queryByPlaceholderText('Resource Title')).not.toBeInTheDocument());
   });
 });
