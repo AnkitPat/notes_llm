@@ -6,15 +6,13 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { Resource, ResourceType } from '../types/dashboard';
+import { ResourceNavigationItem } from './ResourceNavigationItem';
+import { AddResourceDrawer } from './AddResourceDrawer';
 
 interface ResourceNavigationProps {
   resources: Resource[];
@@ -34,10 +32,7 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
   isUploading = false,
 }) => {
   const [filterType, setFilterType] = useState<ResourceType | 'All Resources'>('All Resources');
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newResourceTitle, setNewResourceTitle] = useState('');
-  const [newResourceType, setNewResourceType] = useState<ResourceType>('Note');
-  const [newResourceContent, setNewResourceContent] = useState('');
+  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
 
   const filteredResources =
     filterType === 'All Resources'
@@ -47,15 +42,6 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
   const getCount = (type: ResourceType | 'All Resources') => {
     if (type === 'All Resources') return resources.length;
     return resources.filter((res) => res.type === type).length;
-  };
-
-  const handleAddResource = () => {
-    if (newResourceTitle.trim() && (newResourceContent.trim() || newResourceType === 'Document')) {
-      onAddResource(newResourceType, newResourceTitle.trim(), newResourceContent.trim());
-      setNewResourceTitle('');
-      setNewResourceContent('');
-      setShowAddForm(false);
-    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,14 +87,12 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
       </Typography>
       <List sx={{ flexGrow: 1, overflowY: 'auto', p: 0 }}>
         {filteredResources.map((resource) => (
-          <ListItemButton
+          <ResourceNavigationItem
             key={resource.id}
+            resource={resource}
             selected={selectedResource?.id === resource.id}
             onClick={() => onSelectResource(resource)}
-            sx={{ borderRadius: 1, mb: 0.5, '&.Mui-selected': { bgcolor: 'grey.700', color: 'primary.light' } }}
-          >
-            <ListItemText primary={resource.title} />
-          </ListItemButton>
+          />
         ))}
       </List>
 
@@ -124,23 +108,17 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
             {isUploading ? 'Uploading...' : 'Upload PDF/Doc'}
             <input type="file" hidden onChange={handleFileChange} accept=".pdf,.doc,.docx,.txt" />
           </Button>
-          <Button variant="contained" color="success" fullWidth onClick={() => setShowAddForm(!showAddForm)}>
-            {showAddForm ? 'Cancel' : 'Add Note/Link'}
+          <Button variant="contained" color="success" fullWidth onClick={() => setIsAddDrawerOpen(true)}>
+            Add Note/Link
           </Button>
         </Box>
-
-        {showAddForm && (
-          <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.950', borderRadius: 1, border: 1, borderColor: 'grey.700' }}>
-            <TextField fullWidth size="small" placeholder="Title" value={newResourceTitle} onChange={(e) => setNewResourceTitle(e.target.value)} sx={{ mb: 1, input: { color: 'white' } }} />
-            <TextField select fullWidth size="small" value={newResourceType} onChange={(e) => setNewResourceType(e.target.value as ResourceType)} sx={{ mb: 1, input: { color: 'white' } }}>
-              <MenuItem value="Note">Note</MenuItem>
-              <MenuItem value="Link">Link</MenuItem>
-            </TextField>
-            <TextField fullWidth size="small" placeholder={newResourceType === 'Link' ? 'Enter URL' : 'Enter Note'} multiline rows={3} value={newResourceContent} onChange={(e) => setNewResourceContent(e.target.value)} sx={{ mb: 1, input: { color: 'white' } }} />
-            <Button variant="contained" fullWidth onClick={handleAddResource}>Create</Button>
-          </Box>
-        )}
       </Box>
+      
+      <AddResourceDrawer 
+        open={isAddDrawerOpen} 
+        onClose={() => setIsAddDrawerOpen(false)} 
+        onAdd={onAddResource} 
+      />
     </Box>
   );
 };
