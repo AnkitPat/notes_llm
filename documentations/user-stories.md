@@ -68,3 +68,12 @@
 - The UI uses dummy sample data for resources and content.
 - No backend logic is modified for this user story.
 
+## US7: Refactor Dashboard Resource Navigation
+**Status:** In Progress
+**Description:** As a user, I want a modern sidebar for navigation, so that I can easily distinguish between resources and navigate comfortably.
+
+**Acceptance Criteria:**
+- `ResourceNavigationItem` component created.
+- `ResourceNavigation` refactored to use `ResourceNavigationItem`.
+- Tests pass.
+
