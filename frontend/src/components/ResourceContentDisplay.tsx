@@ -29,19 +29,25 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
             <Typography
               variant="body1"
               component="div"
+              style={{height: '100%', overflowY: 'auto'}}
               dangerouslySetInnerHTML={{ __html: selectedResource.content.replace(/\\n/g, '<br />') }}
             />
           </Box>
         );
       case 'Link':
         return (
-          <Box>
+          <Box sx={{ height: '100%' }}>
             <Typography variant="h5" component="h1" gutterBottom>
               {selectedResource.title}
             </Typography>
-            <Link href={selectedResource.content} target="_blank" rel="noopener noreferrer">
-              {selectedResource.content}
-            </Link>
+            <iframe
+              src={selectedResource.content}
+              title={selectedResource.title}
+              width="100%"
+              height="100%"
+              sandbox="allow-scripts allow-same-origin allow-forms"
+              style={{ border: 'none' }}
+            />
           </Box>
         );
       default:
@@ -50,7 +56,7 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
   };
 
   return (
-    <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%', bgcolor: 'grey.50', boxShadow: 'inset 0 0 4px rgba(0,0,0,0.1)' }}>
+    <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, bgcolor: 'grey.50', boxShadow: 'inset 0 0 4px rgba(0,0,0,0.1)' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: 1, borderColor: 'divider' }}>
         <Typography variant="h6" fontWeight="bold">Viewer</Typography>
         <Button
@@ -62,7 +68,7 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
           Remove Resource
         </Button>
       </Box>
-      <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 3 }}>{renderContent()}</Box>
+      <Box sx={{  overflowY: 'auto', p: 3 }}>{renderContent()}</Box>
     </Paper>
   );
 };
