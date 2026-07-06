@@ -13,9 +13,10 @@ interface ResourceNavigationProps {
   resources: Resource[];
   selectedResource: Resource | null;
   onSelectResource: (resource: Resource) => void;
-  onAddResource: (type: ResourceType, title: string, content: string) => void;
+  onAddResource: (type: ResourceType, title: string, content: string, link?: string) => void;
   onUploadDocument: (file: File) => void;
   isUploading?: boolean;
+  noteId: string;
 }
 
 const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
@@ -25,6 +26,7 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
   onAddResource,
   onUploadDocument,
   isUploading = false,
+  noteId,
 }) => {
   const [filterType, setFilterType] = useState<ResourceType | 'All Resources'>('All Resources');
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
@@ -97,6 +99,7 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
         open={isAddDrawerOpen} 
         onClose={() => setIsAddDrawerOpen(false)} 
         onAdd={onAddResource} 
+        noteId={noteId}
       />
     </Box>
   );
