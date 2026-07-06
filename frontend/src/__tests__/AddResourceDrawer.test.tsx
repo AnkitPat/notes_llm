@@ -7,7 +7,7 @@ describe('AddResourceDrawer', () => {
   const mockOnAdd = vi.fn();
 
   it('calls onAdd with correct parameters when Create is clicked', () => {
-    render(<AddResourceDrawer open={true} onClose={mockOnClose} onAdd={mockOnAdd} />);
+    render(<AddResourceDrawer open={true} onClose={mockOnClose} onAdd={mockOnAdd} noteId="test-note-id" />);
     
     // Fill title
     const titleInput = screen.getByLabelText(/Title/i);

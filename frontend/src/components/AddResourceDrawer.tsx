@@ -89,6 +89,50 @@ export const AddResourceDrawer: React.FC<Props> = ({ open, onClose, onAdd, noteI
               <TextField fullWidth label="URL" value={link} onChange={e => setLink(e.target.value)} sx={{ mb: 2 }} />
             )}
             <Button variant="contained" fullWidth onClick={handleSubmit}>Create</Button>
+            {(title || (type === 'Note' ? content : link)) && (
+              <Box sx={{ mt: 3, border: '1px solid', borderColor: 'divider', borderRadius: 1, p: 2, bgcolor: 'action.hover' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                  <Box sx={{ width: 8, height: 8, bgcolor: 'success.main', borderRadius: '50%' }} />
+                  <Typography variant="caption" sx={{ fontWeight: 'bold', color: 'primary.main', letterSpacing: 1 }}>
+                    LIVE PREVIEW
+                  </Typography>
+                </Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1, color: title ? 'text.primary' : 'text.secondary', fontStyle: title ? 'normal' : 'italic' }}>
+                  {title || 'Untitled'}
+                </Typography>
+                {type === 'Note' ? (
+                  <Box 
+                    sx={{ 
+                      p: 1.5, 
+                      bgcolor: 'background.paper', 
+                      border: '1px solid', 
+                      borderColor: 'divider', 
+                      borderRadius: 1,
+                      maxHeight: 150,
+                      overflowY: 'auto',
+                      fontSize: '0.875rem',
+                      wordBreak: 'break-word',
+                      '& *': { margin: 0 } 
+                    }} 
+                    dangerouslySetInnerHTML={{ __html: content || '<em>No content entered yet</em>' }} 
+                  />
+                ) : (
+                  <Box sx={{ p: 1.5, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                    <Button 
+                      href={link || '#'} 
+                      target="_blank" 
+                      variant="outlined" 
+                      size="small" 
+                      fullWidth 
+                      disabled={!link}
+                      sx={{ textTransform: 'none' }}
+                    >
+                      {link ? `Open Link: ${link}` : 'No URL entered yet'}
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            )}
           </Box>
         )}
       </Box>
