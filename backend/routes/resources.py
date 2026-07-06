@@ -23,7 +23,9 @@ class ResourceUpdate(BaseModel):
 async def get_resources(note_id: str):
     cursor = db.resources.find({"noteId": ObjectId(note_id)})
     resources = await cursor.to_list(length=100)
-    for r in resources: r["_id"] = str(r["_id"])
+    for r in resources: 
+        r["_id"] = str(r["_id"])
+        r["noteId"] = str(r["noteId"])
     return resources
 
 @router.post("/resources")

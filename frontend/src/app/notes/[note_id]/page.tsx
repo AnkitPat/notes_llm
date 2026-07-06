@@ -27,6 +27,24 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
+  const fetchResources = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/notes/${note_id}/resources`);
+      if (response.ok) {
+        const data = await response.json();
+        const mapped = data.map((r: any) => ({
+          id: r._id,
+          type: r.type,
+          title: r.name,
+          content: r.type === 'Link' ? r.link : r.content || ''
+        }));
+        setResources(mapped);
+      }
+    } catch (error) {
+      console.error('Error fetching resources:', error);
+    }
+  };
+
   useEffect(() => {
     async function fetchNote() {
         try {
@@ -42,6 +60,7 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
         }
     }
     fetchNote();
+    fetchResources();
   }, [note_id]);
   
   const handleSelectResource = (resource: Resource) => {
@@ -60,15 +79,8 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
     setIsChatExpanded(!isChatExpanded);
   };
 
-  const handleAddResource = (type: ResourceType, title: string, content: string) => {
-    const newResource: Resource = {
-      id: `new-${Date.now()}`,
-      type,
-      title,
-      content,
-    };
-    setResources((prevResources) => [...prevResources, newResource]);
-    setSelectedResource(newResource);
+  const handleAddResource = async (type: ResourceType, title: string, content: string, link?: string) => {
+    await fetchResources();
   };
 
   const handleUploadDocument = async (file: File) => {
@@ -95,6 +107,7 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
                 onAddResource={handleAddResource}
                 onUploadDocument={handleUploadDocument}
                 isUploading={isUploading}
+                noteId={note_id}
             />
             </div>
 
