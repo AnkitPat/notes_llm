@@ -36,7 +36,7 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
         );
       case 'Link':
         return (
-          <Box sx={{ height: '100%' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <Typography variant="h5" component="h1" gutterBottom>
               {selectedResource.title}
             </Typography>
@@ -44,9 +44,8 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
               src={selectedResource.content}
               title={selectedResource.title}
               width="100%"
-              height="100%"
+              style={{ border: 'none', flexGrow: 1 }}
               sandbox="allow-scripts allow-same-origin allow-forms"
-              style={{ border: 'none' }}
             />
           </Box>
         );
