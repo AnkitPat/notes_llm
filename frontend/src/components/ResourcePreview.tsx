@@ -53,17 +53,14 @@ export const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         />
       ) : (
         <Box sx={{ p: 1.5, bgcolor: 'action.hover', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-          <Button
-            href={link || '#'}
-            target="_blank"
-            variant="outlined"
-            size="small"
-            fullWidth
-            disabled={!link}
-            sx={{ textTransform: 'none' }}
-          >
-            {link ? `Open Link: ${link}` : 'No URL entered yet'}
-          </Button>
+          <iframe
+            src={link || '#'}
+            title={title || 'Resource Preview'}
+            width="100%"
+            height="400px"
+            sandbox="allow-scripts allow-same-origin allow-forms"
+            style={{ border: 'none' }}
+          />
         </Box>
       )}
     </Box>
