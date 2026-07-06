@@ -23,7 +23,7 @@ export const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   const sanitizedContent = DOMPurify.sanitize(content || '<em>No content entered yet</em>');
 
   return (
-    <Box sx={{ mt: 3, border: '1px solid', borderColor: 'divider', borderRadius: 1, p: 2, bgcolor: 'background.paper' }}>
+    <Box sx={{ mt: 3, border: '1px solid', borderColor: 'divider', borderRadius: 1, p: 2, bgcolor: 'background.paper' }} data-testid="resource-preview">
       {showLivePreviewLabel && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
           <Box sx={{ width: 8, height: 8, bgcolor: 'success.main', borderRadius: '50%' }} />
