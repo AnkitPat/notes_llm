@@ -43,7 +43,7 @@ const ChatQnASection: React.FC<ChatQnASectionProps> = ({
   return (
     <Paper sx={{ display: 'flex', flexDirection: 'column', height: '100%', borderRadius: 2, overflow: 'hidden' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: 1, borderColor: 'divider' }}>
-        <Typography variant="h6" fontWeight="bold" color="text.primary">{chatMode}</Typography>
+        <Typography  variant="h6"  color="text.primary">{chatMode}</Typography>
         {chatMode === 'Resource Chat' && (
           <IconButton onClick={onToggleChatExpand} size="small">
             {isChatExpanded ? <CloseFullscreenIcon fontSize="small" /> : <OpenInFullIcon fontSize="small" />}

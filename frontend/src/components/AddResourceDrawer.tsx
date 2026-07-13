@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ResourceType } from '../types/dashboard';
+import { ResourcePreview } from './ResourcePreview';
 
 interface Props {
   open: boolean;
@@ -15,13 +16,21 @@ interface Props {
   noteId: string;
 }
 
+interface ResourceData {
+  id: string;
+  title: string;
+  type: ResourceType;
+  content: string;
+  link?: string;
+}
+
 export const AddResourceDrawer: React.FC<Props> = ({ open, onClose, onAdd, noteId }) => {
   const [title, setTitle] = useState('');
   const [type, setType] = useState<ResourceType>('Note');
   const [content, setContent] = useState('');
   const [link, setLink] = useState('');
   const [loading, setLoading] = useState(false);
-  const [createdResource, setCreatedResource] = useState<any>(null);
+  const [createdResource, setCreatedResource] = useState<ResourceData | null>(null);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -68,11 +77,7 @@ export const AddResourceDrawer: React.FC<Props> = ({ open, onClose, onAdd, noteI
         ) : createdResource ? (
           <Box>
             <Typography variant="h6" sx={{ mb: 2 }}>Preview</Typography>
-            {createdResource.type === 'Note' ? (
-              <Box sx={{ border: '1px solid #ccc', p: 2, borderRadius: 1 }} dangerouslySetInnerHTML={{ __html: createdResource.content }} />
-            ) : (
-              <Button href={createdResource.link} target="_blank" variant="outlined" fullWidth>Open Link</Button>
-            )}
+            <ResourcePreview title={createdResource.title} type={createdResource.type} content={createdResource.content} link={createdResource.link || ''} />
             <Button onClick={handleClose} sx={{ mt: 2 }} fullWidth>Close</Button>
           </Box>
         ) : (
@@ -89,6 +94,9 @@ export const AddResourceDrawer: React.FC<Props> = ({ open, onClose, onAdd, noteI
               <TextField fullWidth label="URL" value={link} onChange={e => setLink(e.target.value)} sx={{ mb: 2 }} />
             )}
             <Button variant="contained" fullWidth onClick={handleSubmit}>Create</Button>
+            {(title || (type === 'Note' ? content : link)) && (
+              <ResourcePreview title={title} type={type} content={content} link={link} showLivePreviewLabel={true} />
+            )}
           </Box>
         )}
       </Box>
