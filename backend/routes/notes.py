@@ -13,6 +13,9 @@ class NoteCreate(BaseModel):
 class NoteUpdate(BaseModel):
     resourceIds: List[str]
 
+class NoteUpdateName(BaseModel):
+    name: str
+
 @router.get("/notes/{note_id}")
 async def get_note(note_id: str):
     note = await db.notes.find_one({"_id": ObjectId(note_id)})
@@ -33,6 +36,16 @@ async def create_note(note: NoteCreate):
     new_note = {"userId": note.email, "name": note.name, "resourceIds": []}
     result = await db.notes.insert_one(new_note)
     return {"id": str(result.inserted_id)}
+
+@router.put("/notes/{note_id}")
+async def update_note_name(note_id: str, note_update: NoteUpdateName):
+    result = await db.notes.update_one(
+        {"_id": ObjectId(note_id)},
+        {"$set": {"name": note_update.name}}
+    )
+    if result.modified_count == 0:
+        return {"error": "Note not found or no change"}, 404
+    return {"message": "Note updated"}
 
 @router.patch("/notes/{note_id}")
 async def update_note(note_id: str, note_update: NoteUpdate):
