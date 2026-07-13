@@ -19,7 +19,7 @@ interface NoteDetailPageProps {
 const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
   const { note_id } = React.use(params);
   const [noteName, setNoteName] = useState<string>('Loading...');
-  
+
   const [resources, setResources] = useState<Resource[]>([]);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
 
@@ -47,22 +47,22 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
 
   useEffect(() => {
     async function fetchNote() {
-        try {
-            const response = await fetch(`http://localhost:8000/notes/${note_id}`);
-            if (response.ok) {
-                const data = await response.json();
-                setNoteName(data.name);
-            } else {
-                setNoteName('Unknown Note');
-            }
-        } catch (error) {
-            setNoteName('Error loading note');
+      try {
+        const response = await fetch(`http://localhost:8000/notes/${note_id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setNoteName(data.name);
+        } else {
+          setNoteName('Unknown Note');
         }
+      } catch (error) {
+        setNoteName('Error loading note');
+      }
     }
     fetchNote();
     fetchResources();
   }, [note_id]);
-  
+
   const handleSelectResource = (resource: Resource) => {
     setSelectedResource(resource);
     setIsChatExpanded(false);
@@ -97,54 +97,57 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
 
   return (
     <ProtectedRoute>
-      <div className="flex flex-grow overflow-hidden">
-            {/* Left Panel - Resource Navigation */}
-            <div className="w-[30%] bg-gray-800 text-white flex flex-col border-r border-gray-700">
-            <ResourceNavigation
-                resources={resources}
-                selectedResource={selectedResource}
-                onSelectResource={handleSelectResource}
-                onAddResource={handleAddResource}
-                onUploadDocument={handleUploadDocument}
-                isUploading={isUploading}
-                noteId={note_id}
-            />
-            </div>
-
-            {/* Right Panel - Content Display and Permanent Chat */}
-            <div className="w-[70%] flex flex-col p-6 overflow-hidden">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">{noteName}</h1>
-            </div>
-
-            <div className="flex-grow flex flex-row gap-6 overflow-hidden">
-                {/* Conditional Content Area */}
-                <div className="flex-1 bg-white rounded-lg shadow overflow-hidden">
-                    {selectedResource ? (
-                        <ResourceContentDisplay
-                            selectedResource={selectedResource}
-                            onRemoveResource={handleRemoveResource}
-                        />
-                    ) : (
-                        <div className=" flex items-center justify-center h-full">
-                            <p className="text-gray-500">Select a resource to view details.</p>
-                        </div>
-                    )}
-                </div>
-
-                {/* Permanent Chat Area */}
-                <div className="h-full flex-1 bg-white rounded-lg shadow overflow-hidden">
-                    <ChatQnASection
-                        chatHistory={messages}
-                        onSendMessage={handleSendMessage}
-                        isChatExpanded={isChatExpanded}
-                        onToggleChatExpand={handleToggleChatExpand}
-                        chatMode={selectedResource ? 'Resource Chat' : 'General Chat'}
-                    />
-                </div>
-            </div>
-            </div>
+      <div className="flex h-[calc(100vh-64px-64px)] overflow-hidden">
+        {/* Left Panel */}
+        <div className="w-[30%] bg-gray-800 text-white flex flex-col border-r border-gray-700">
+          <ResourceNavigation
+            resources={resources}
+            selectedResource={selectedResource}
+            onSelectResource={handleSelectResource}
+            onAddResource={handleAddResource}
+            onUploadDocument={handleUploadDocument}
+            isUploading={isUploading}
+            noteId={note_id}
+          />
         </div>
+
+        {/* Right Panel */}
+        <div className="w-[70%] flex flex-col p-6 overflow-hidden min-h-0">
+          <div className="flex justify-between items-center mb-6 shrink-0">
+            <h1 className="text-2xl font-bold text-gray-900">{noteName}</h1>
+          </div>
+
+          <div className="flex flex-1 min-h-0 gap-6 overflow-hidden">
+            {/* Left Content */}
+            <div className="flex-1 min-h-0 bg-white rounded-lg shadow flex flex-col">
+              {selectedResource ? (
+                <ResourceContentDisplay
+                  selectedResource={selectedResource}
+                  onRemoveResource={handleRemoveResource}
+                />
+
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <p className="text-gray-500">
+                    Select a resource to view details.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Right Chat */}
+            <div className="flex-1 bg-white rounded-lg shadow flex flex-col overflow-hidden">
+              <ChatQnASection
+                chatHistory={messages}
+                onSendMessage={handleSendMessage}
+                isChatExpanded={isChatExpanded}
+                onToggleChatExpand={handleToggleChatExpand}
+                chatMode={selectedResource ? "Resource Chat" : "General Chat"}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </ProtectedRoute>
   );
 };

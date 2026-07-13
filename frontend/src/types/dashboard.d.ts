@@ -1,7 +1,7 @@
 // frontend/src/types/dashboard.d.ts
 
 export type ResourceType = 'Document' | 'Link' | 'Note';
-export type ChatMode = 'Resource Chat' | 'All Resource Chat';
+export type ChatMode = 'Resource Chat' | 'All Resource Chat' | "General Chat";
 
 export interface Resource {
   id: string;

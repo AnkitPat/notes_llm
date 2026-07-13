@@ -22,7 +22,7 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
       case 'Document':
       case 'Note':
         return (
-          <Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <Typography variant="h4" component="h1" gutterBottom>
               {selectedResource.title}
             </Typography>
@@ -44,7 +44,7 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
               src={selectedResource.content}
               title={selectedResource.title}
               width="100%"
-              style={{ border: 'none', flexGrow: 1 }}
+              style={{ border: 'none', flexGrow: 1, height: '100%' }}
               sandbox="allow-scripts allow-same-origin allow-forms"
             />
           </Box>
@@ -67,7 +67,7 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
           Remove Resource
         </Button>
       </Box>
-      <Box sx={{  overflowY: 'auto', p: 3 }}>{renderContent()}</Box>
+      <Box sx={{  overflowY: 'auto', p: 3, height: '100%' }}>{renderContent()}</Box>
     </Paper>
   );
 };

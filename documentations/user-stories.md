@@ -77,3 +77,15 @@
 - `ResourceNavigation` refactored to use `ResourceNavigationItem`.
 - Tests pass.
 
+## US8: Real-time Resource Creation Preview
+**Status:** In Progress
+**Description:** As a user, when I am adding a new resource (Note or Link) in the dashboard, I want to see a real-time preview of the title and typed content/link below the Create button before I click Create, so that I can verify its styling and content without having to save first.
+
+**Acceptance Criteria:**
+- A dynamic live preview section is added below the "Create" button inside the form view of `AddResourceDrawer`.
+- The live preview displays the resource title (defaults to "Untitled" if empty).
+- For a "Note" resource type, the content is rendered live as rich HTML using `dangerouslySetInnerHTML`.
+- For a "Link" resource type, a styled button is shown that serves as a live link preview (`target="_blank"`), displaying the input URL.
+- The live preview section only appears when at least one field (Title, Content, or Link URL) is non-empty.
+- Unit/integration tests are added/updated to verify the preview block behavior.
+

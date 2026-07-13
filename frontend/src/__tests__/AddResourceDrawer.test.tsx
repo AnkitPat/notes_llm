@@ -60,7 +60,7 @@ describe('AddResourceDrawer', () => {
     expect(boldElement.tagName).toBe('B');
   });
 
-  it('renders link button for link resource in preview', () => {
+  it('renders iframe for link resource in preview', () => {
     render(<AddResourceDrawer open={true} onClose={mockOnClose} onAdd={mockOnAdd} noteId="test-note-id" />);
     
     // Change type to Link - MUI Select uses a hidden input
@@ -73,8 +73,8 @@ describe('AddResourceDrawer', () => {
     fireEvent.change(urlInput, { target: { value: 'https://example.com' } });
     
     const preview = screen.getByTestId('resource-preview');
-    const linkButton = within(preview).getByRole('link', { name: /Open Link: https:\/\/example.com/i });
-    expect(linkButton).toBeInTheDocument();
-    expect(linkButton).toHaveAttribute('href', 'https://example.com');
+    const iframe = within(preview).getByTitle('Resource Preview');
+    expect(iframe).toBeInTheDocument();
+    expect(iframe).toHaveAttribute('src', 'https://example.com');
   });
 });

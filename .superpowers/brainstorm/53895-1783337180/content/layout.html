@@ -1,0 +1,93 @@
+<h2>Choose a Live Preview Layout</h2>
+<p class="subtitle">Select the option that best fits your preference for showing the Note and Link previews below the Create button.</p>
+
+<div class="options" style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+  
+  <!-- Option A Card -->
+  <div class="option" data-choice="a" onclick="toggleSelect(this)" style="flex: 1; min-width: 300px; border: 2px solid #ccc; padding: 20px; border-radius: 8px; cursor: pointer; transition: border-color 0.2s;">
+    <div class="letter" style="font-weight: bold; font-size: 1.5rem; color: #2563eb; margin-bottom: 10px;">Option A: Integrated Live Card (Clean & Focused)</div>
+    <p>A clean, automatically visible card directly below the "Create" button. It updates in real-time as you type, and matches the MUI style of our sidebar/app.</p>
+    
+    <div style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 15px; margin-top: 15px; background: #f9f9f9; width: 340px; margin-left: auto; margin-right: auto;">
+      <div style="font-size: 0.8rem; font-weight: bold; color: #666; margin-bottom: 8px; text-transform: uppercase;">MUI Drawer Simulation (400px wide)</div>
+      
+      <!-- Input fields representation -->
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 0.75rem; color: #666;">Title</label>
+        <div style="border: 1px solid #ccc; padding: 6px; font-size: 0.85rem; border-radius: 4px; background: white;">My Awesome Resource</div>
+      </div>
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 0.75rem; color: #666;">Type</label>
+        <div style="border: 1px solid #ccc; padding: 6px; font-size: 0.85rem; border-radius: 4px; background: white;">Note</div>
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 0.75rem; color: #666;">Content (HTML)</label>
+        <div style="border: 1px solid #ccc; padding: 6px; font-size: 0.85rem; border-radius: 4px; background: white; min-height: 40px; font-family: monospace;">&lt;h3&gt;Goals&lt;/h3&gt;&lt;p&gt;Learn RAG!&lt;/p&gt;</div>
+      </div>
+      
+      <!-- Create Button -->
+      <button style="width: 100%; background: #2563eb; color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; margin-bottom: 15px;">Create</button>
+      
+      <!-- Live Preview Block A -->
+      <div style="border: 1px solid #2563eb; border-radius: 4px; padding: 12px; background: #eff6ff;">
+        <div style="font-size: 0.75rem; font-weight: bold; color: #2563eb; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+          <span style="display:inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+          LIVE PREVIEW
+        </div>
+        <div style="font-size: 1rem; font-weight: bold; color: #1e293b; margin-bottom: 4px;">My Awesome Resource</div>
+        
+        <!-- Rendered Note -->
+        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 8px; font-size: 0.85rem;">
+          <h3 style="margin: 0 0 4px 0; font-size: 0.95rem; color: #2563eb;">Goals</h3>
+          <p style="margin: 0; font-size: 0.85rem; color: #334155;">Learn RAG!</p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Option B Card -->
+  <div class="option" data-choice="b" onclick="toggleSelect(this)" style="flex: 1; min-width: 300px; border: 2px solid #ccc; padding: 20px; border-radius: 8px; cursor: pointer; transition: border-color 0.2s;">
+    <div class="letter" style="font-weight: bold; font-size: 1.5rem; color: #7c3aed; margin-bottom: 10px;">Option B: Collapsible Preview (With Accordion/Toggle)</div>
+    <p>Includes an expandable accordion header "Show Live Preview". It stays collapsed by default or can be collapsed to save space on smaller screens, keeping the drawer compact.</p>
+    
+    <div style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 15px; margin-top: 15px; background: #f9f9f9; width: 340px; margin-left: auto; margin-right: auto;">
+      <div style="font-size: 0.8rem; font-weight: bold; color: #666; margin-bottom: 8px; text-transform: uppercase;">MUI Drawer Simulation (400px wide)</div>
+      
+      <!-- Input fields representation -->
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 0.75rem; color: #666;">Title</label>
+        <div style="border: 1px solid #ccc; padding: 6px; font-size: 0.85rem; border-radius: 4px; background: white;">React Docs</div>
+      </div>
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 0.75rem; color: #666;">Type</label>
+        <div style="border: 1px solid #ccc; padding: 6px; font-size: 0.85rem; border-radius: 4px; background: white;">Link</div>
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 0.75rem; color: #666;">URL</label>
+        <div style="border: 1px solid #ccc; padding: 6px; font-size: 0.85rem; border-radius: 4px; background: white; min-height: 40px; font-family: monospace;">https://react.dev</div>
+      </div>
+      
+      <!-- Create Button -->
+      <button style="width: 100%; background: #2563eb; color: white; border: none; padding: 8px; border-radius: 4px; font-weight: bold; margin-bottom: 15px;">Create</button>
+      
+      <!-- Accordion Header -->
+      <div style="border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; padding: 8px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.8rem; font-weight: bold; color: #475569;">Show Live Preview (1)</span>
+        <span style="font-size: 0.7rem; color: #64748b;">▼</span>
+      </div>
+      
+      <!-- Live Preview Block B (Expanded) -->
+      <div style="border: 1px solid #cbd5e1; border-top: none; border-radius: 0 0 4px 4px; padding: 12px; background: #f8fafc;">
+        <div style="font-size: 1rem; font-weight: bold; color: #1e293b; margin-bottom: 8px;">React Docs</div>
+        
+        <!-- Rendered Link Preview Button -->
+        <a href="#" style="display: block; text-align: center; text-decoration: none; border: 1px solid #2563eb; color: #2563eb; background: white; padding: 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
+          Open Link: react.dev ↗
+        </a>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
