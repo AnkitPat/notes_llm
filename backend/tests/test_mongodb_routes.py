@@ -64,10 +64,14 @@ def test_create_and_get_note():
     assert response.status_code == 200
     assert response.json() == []
 
-def test_update_note():
-    response = client.patch(f"/notes/{VALID_ID}", json={"resourceIds": [VALID_RES_ID, "507f1f77bcf86cd799439013"]})
+def test_update_note_name():
+    response = client.put(f"/notes/{VALID_ID}", json={"name": "Updated Note Name"})
     assert response.status_code == 200
     assert response.json() == {"message": "Note updated"}
+
+def test_delete_note():
+    response = client.delete(f"/notes/{VALID_ID}")
+    assert response.status_code == 204
 
 def test_create_resource():
     response = client.post("/resources", json={
