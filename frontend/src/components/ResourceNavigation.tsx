@@ -73,6 +73,8 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
             resource={resource}
             selected={selectedResource?.id === resource.id}
             onClick={() => onSelectResource(resource)}
+            onEdit={() => console.log('Edit', resource.id)}
+            onDelete={() => console.log('Delete', resource.id)}
           />
         ))}
       </List>

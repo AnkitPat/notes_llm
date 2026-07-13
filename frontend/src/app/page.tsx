@@ -5,6 +5,12 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { CreateNoteModal } from '@/components/CreateNoteModal';
+import { EditNoteModal } from '@/components/EditNoteModal';
+import { DeleteNoteConfirmationDialog } from '@/components/DeleteNoteConfirmationDialog';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface Note {
   _id: string;
@@ -16,6 +22,12 @@ export default function Home() {
   const { data: session } = useSession();
   const [notes, setNotes] = useState<Note[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // State for actions
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [activeNote, setActiveNote] = useState<Note | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const fetchNotes = useCallback(async () => {
     if (!session?.user?.email) return;
@@ -37,7 +49,6 @@ export default function Home() {
   const handleCreateNote = async (name: string) => {
     if (!session?.user?.email) throw new Error('User not logged in');
 
-    // API Call
     const response = await fetch('http://localhost:8000/notes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -46,7 +57,29 @@ export default function Home() {
     if (!response.ok) {
         throw new Error('Failed to create note');
     }
-    await fetchNotes(); // Refresh list
+    await fetchNotes();
+  };
+
+  const handleUpdateNote = async (name: string) => {
+    if (!activeNote) return;
+    const response = await fetch(`http://localhost:8000/notes/${activeNote._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+    if (!response.ok) throw new Error('Failed to update note');
+    await fetchNotes();
+    setIsEditModalOpen(false);
+  };
+
+  const handleDeleteNote = async () => {
+    if (!activeNote) return;
+    const response = await fetch(`http://localhost:8000/notes/${activeNote._id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete note');
+    await fetchNotes();
+    setIsDeleteModalOpen(false);
   };
 
   return (
@@ -70,22 +103,55 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {notes.map((note) => (
-                <Link 
-                  key={note._id} 
-                  href={`/notes/${note._id}`}
-                  className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
-                >
-                  <h2 className="text-xl font-semibold mb-2">{note.name}</h2>
-                </Link>
+                <div key={note._id} className="relative bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+                  <Link 
+                    href={`/notes/${note._id}`}
+                    className="block p-6"
+                  >
+                    <h2 className="text-xl font-semibold mb-2">{note.name}</h2>
+                  </Link>
+                  <div className="absolute top-2 right-2">
+                    <IconButton onClick={(e) => { e.stopPropagation(); setActiveNote(note); setMenuAnchorEl(e.currentTarget); }}>
+                      <MoreVertIcon />
+                    </IconButton>
+                  </div>
+                </div>
               ))}
             </div>
           )}
         </div>
+        
+        <Menu 
+          anchorEl={menuAnchorEl} 
+          open={Boolean(menuAnchorEl)} 
+          onClose={() => setMenuAnchorEl(null)}
+        >
+          <MenuItem onClick={() => { setMenuAnchorEl(null); setIsEditModalOpen(true); }}>Edit</MenuItem>
+          <MenuItem onClick={() => { setMenuAnchorEl(null); setIsDeleteModalOpen(true); }}>Delete</MenuItem>
+        </Menu>
+
         <CreateNoteModal 
           isOpen={isModalOpen} 
           onClose={() => setIsModalOpen(false)} 
           onCreate={handleCreateNote} 
         />
+        
+        {activeNote && (
+          <>
+            <EditNoteModal 
+              isOpen={isEditModalOpen} 
+              onClose={() => setIsEditModalOpen(false)} 
+              onSave={handleUpdateNote}
+              initialName={activeNote.name}
+            />
+            <DeleteNoteConfirmationDialog 
+              isOpen={isDeleteModalOpen} 
+              onClose={() => setIsDeleteModalOpen(false)} 
+              onConfirm={handleDeleteNote}
+              noteName={activeNote.name}
+            />
+          </>
+        )}
       </div>
     </ProtectedRoute>
   );

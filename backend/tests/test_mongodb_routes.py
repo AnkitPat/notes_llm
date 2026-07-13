@@ -21,6 +21,7 @@ def mock_db():
     mock_db.notes = MagicMock()
     mock_db.notes.insert_one = AsyncMock(return_value=MagicMock(inserted_id=VALID_ID))
     mock_db.notes.update_one = AsyncMock(return_value=MagicMock())
+    mock_db.notes.delete_one = AsyncMock(return_value=MagicMock(deleted_count=1))
     mock_db.notes.find = MagicMock()
     
     # Mocking db.resources
@@ -64,10 +65,37 @@ def test_create_and_get_note():
     assert response.status_code == 200
     assert response.json() == []
 
-def test_update_note():
-    response = client.patch(f"/notes/{VALID_ID}", json={"resourceIds": [VALID_RES_ID, "507f1f77bcf86cd799439013"]})
+def test_update_note_name():
+    response = client.put(f"/notes/{VALID_ID}", json={"name": "Updated Note Name"})
     assert response.status_code == 200
     assert response.json() == {"message": "Note updated"}
+
+def test_delete_note():
+    response = client.delete(f"/notes/{VALID_ID}")
+    assert response.status_code == 204
+
+def test_get_note_nonexistent():
+    # Simulate not found
+    with patch("routes.notes.db.notes.find_one", new_callable=AsyncMock) as mock_find:
+        mock_find.return_value = None
+        response = client.get(f"/notes/{VALID_ID}")
+        assert response.status_code == 404
+
+def test_get_note_malformed():
+    response = client.get("/notes/invalid-id")
+    assert response.status_code == 400
+
+def test_update_note_name_nonexistent():
+    with patch("routes.notes.db.notes.update_one", new_callable=AsyncMock) as mock_update:
+        mock_update.return_value = MagicMock(modified_count=0)
+        response = client.put(f"/notes/{VALID_ID}", json={"name": "New Name"})
+        assert response.status_code == 404
+
+def test_delete_note_nonexistent():
+    with patch("routes.notes.db.notes.delete_one", new_callable=AsyncMock) as mock_delete:
+        mock_delete.return_value = MagicMock(deleted_count=0)
+        response = client.delete(f"/notes/{VALID_ID}")
+        assert response.status_code == 404
 
 def test_create_resource():
     response = client.post("/resources", json={
