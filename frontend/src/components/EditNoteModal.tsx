@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
 
 interface EditNoteModalProps {
   isOpen: boolean;
@@ -15,6 +16,21 @@ interface EditNoteModalProps {
 
 export function EditNoteModal({ isOpen, onClose, onSave, initialName }: EditNoteModalProps) {
   const [name, setName] = useState(initialName);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSave = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await onSave(name);
+      onClose();
+    } catch (err) {
+      setError('Failed to update note.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Modal open={isOpen} onClose={onClose} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -22,6 +38,7 @@ export function EditNoteModal({ isOpen, onClose, onSave, initialName }: EditNote
         <Typography variant="h6" component="h2" gutterBottom>
           Edit Note
         </Typography>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <TextField
           fullWidth
           label="Note Name"
@@ -29,10 +46,13 @@ export function EditNoteModal({ isOpen, onClose, onSave, initialName }: EditNote
           onChange={(e) => setName(e.target.value)}
           margin="normal"
           required
+          disabled={loading}
         />
         <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button variant="contained">Save</Button>
+          <Button onClick={onClose} disabled={loading}>Cancel</Button>
+          <Button variant="contained" onClick={handleSave} disabled={loading}>
+            {loading ? 'Saving...' : 'Save'}
+          </Button>
         </Box>
       </Box>
     </Modal>
