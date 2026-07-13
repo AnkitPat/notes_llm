@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 from utils.db import db
 from bson import ObjectId
 from pydantic import BaseModel
@@ -54,3 +54,10 @@ async def update_note(note_id: str, note_update: NoteUpdate):
         {"$set": {"resourceIds": [ObjectId(rid) for rid in note_update.resourceIds]}}
     )
     return {"message": "Note updated"}
+
+@router.delete("/notes/{note_id}")
+async def delete_note(note_id: str):
+    result = await db.notes.delete_one({"_id": ObjectId(note_id)})
+    if result.deleted_count == 0:
+        return {"error": "Note not found"}, 404
+    return Response(status_code=204)

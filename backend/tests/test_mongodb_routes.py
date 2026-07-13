@@ -21,6 +21,7 @@ def mock_db():
     mock_db.notes = MagicMock()
     mock_db.notes.insert_one = AsyncMock(return_value=MagicMock(inserted_id=VALID_ID))
     mock_db.notes.update_one = AsyncMock(return_value=MagicMock())
+    mock_db.notes.delete_one = AsyncMock(return_value=MagicMock(deleted_count=1))
     mock_db.notes.find = MagicMock()
     
     # Mocking db.resources
