@@ -111,3 +111,15 @@ def test_update_resource():
     response = client.patch(f"/resources/{VALID_RES_ID}", json={"name": "New Name"})
     assert response.status_code == 200
     assert response.json() == {"message": "Resource updated"}
+
+def test_delete_resource():
+    with patch("routes.resources.db.resources.delete_one", new_callable=AsyncMock) as mock_delete:
+        mock_delete.return_value = MagicMock(deleted_count=1)
+        response = client.delete(f"/resources/{VALID_RES_ID}")
+        assert response.status_code == 204
+
+def test_delete_resource_nonexistent():
+    with patch("routes.resources.db.resources.delete_one", new_callable=AsyncMock) as mock_delete:
+        mock_delete.return_value = MagicMock(deleted_count=0)
+        response = client.delete(f"/resources/{VALID_RES_ID}")
+        assert response.status_code == 404
