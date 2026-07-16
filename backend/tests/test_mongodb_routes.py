@@ -118,6 +118,10 @@ def test_delete_resource():
         response = client.delete(f"/resources/{VALID_RES_ID}")
         assert response.status_code == 204
 
+def test_delete_resource_malformed():
+    response = client.delete("/resources/invalid-id")
+    assert response.status_code == 400
+
 def test_delete_resource_nonexistent():
     with patch("routes.resources.db.resources.delete_one", new_callable=AsyncMock) as mock_delete:
         mock_delete.return_value = MagicMock(deleted_count=0)

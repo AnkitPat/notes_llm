@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from utils.db import db
 from bson import ObjectId
+from bson.errors import InvalidId
 from pydantic import BaseModel
 from typing import Optional
 
@@ -52,7 +53,11 @@ async def update_resource(resource_id: str, res: ResourceUpdate):
 
 @router.delete("/resources/{resource_id}", status_code=204)
 async def delete_resource(resource_id: str):
-    result = await db.resources.delete_one({"_id": ObjectId(resource_id)})
+    try:
+        oid = ObjectId(resource_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid resource ID format")
+    result = await db.resources.delete_one({"_id": oid})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Resource not found")
     return None
