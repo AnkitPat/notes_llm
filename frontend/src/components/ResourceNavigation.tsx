@@ -7,13 +7,15 @@ import List from '@mui/material/List';
 import Chip from '@mui/material/Chip';
 import { Resource, ResourceType } from '../types/dashboard';
 import { ResourceNavigationItem } from './ResourceNavigationItem';
-import { AddResourceDrawer } from './AddResourceDrawer';
+import { UpsertResourceDrawer } from './UpsertResourceDrawer';
 
 interface ResourceNavigationProps {
   resources: Resource[];
   selectedResource: Resource | null;
   onSelectResource: (resource: Resource) => void;
   onAddResource: (type: ResourceType, title: string, content: string, link?: string) => void;
+  onEditResource: (id: string, type: ResourceType, title: string, content: string, link?: string) => void;
+  onDeleteResource: (id: string) => void;
   onUploadDocument: (file: File) => void;
   isUploading?: boolean;
   noteId: string;
@@ -24,12 +26,17 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
   selectedResource,
   onSelectResource,
   onAddResource,
+  onEditResource,
+  onDeleteResource,
   onUploadDocument,
   isUploading = false,
   noteId,
 }) => {
   const [filterType, setFilterType] = useState<ResourceType | 'All Resources'>('All Resources');
-  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
+  const [upsertDrawer, setUpsertDrawer] = useState<{ open: boolean; mode: 'create' | 'edit'; initialData?: Resource }>({
+    open: false,
+    mode: 'create',
+  });
 
   const filteredResources =
     filterType === 'All Resources'
@@ -42,18 +49,23 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
     }
   };
 
-  const categories = ['All Resources', 'Document', 'Link', 'Note'] as const;
+  const categories: readonly (ResourceType | 'All Resources')[] = ['All Resources', 'Document', 'Link', 'Note'] as const;
+
+  const getCount = (category: ResourceType | 'All Resources') => {
+    if (category === 'All Resources') return resources.length;
+    return resources.filter((res) => res.type === category).length;
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 115px)', bgcolor: 'grey.900', color: 'white', p: 3 }}>
-      <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>Notebook LLM</Typography>
+      <Typography variant="h5"  sx={{ mb: 3 }}>Notebook LLM</Typography>
 
       <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
         {categories.map((type) => (
           <Chip
             key={type}
-            label={type === 'All Resources' ? type : `${type}s`}
-            onClick={() => setFilterType(type as any)}
+            label={`${type === 'All Resources' ? type : `${type}s`} (${getCount(type)})`}
+            onClick={() => setFilterType(type)}
             color={filterType === type ? 'primary' : 'default'}
             variant={filterType === type ? 'filled' : 'outlined'}
             sx={{ cursor: 'pointer', borderRadius: '16px', color: 'white', borderColor: 'grey.600' }}
@@ -73,8 +85,8 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
             resource={resource}
             selected={selectedResource?.id === resource.id}
             onClick={() => onSelectResource(resource)}
-            onEdit={() => console.log('Edit', resource.id)}
-            onDelete={() => console.log('Delete', resource.id)}
+            onEdit={() => setUpsertDrawer({ open: true, mode: 'edit', initialData: resource })}
+            onDelete={() => onDeleteResource(resource.id)}
           />
         ))}
       </List>
@@ -91,17 +103,29 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
             {isUploading ? 'Uploading...' : 'Upload PDF/Doc'}
             <input type="file" hidden onChange={handleFileChange} accept=".pdf,.doc,.docx,.txt" />
           </Button>
-          <Button variant="contained" color="success" fullWidth onClick={() => setIsAddDrawerOpen(true)}>
+          <Button variant="contained" color="success" fullWidth onClick={() => setUpsertDrawer({ open: true, mode: 'create', initialData: undefined })}>
             Add Note/Link
           </Button>
         </Box>
       </Box>
       
-      <AddResourceDrawer 
-        open={isAddDrawerOpen} 
-        onClose={() => setIsAddDrawerOpen(false)} 
-        onAdd={onAddResource} 
+      <UpsertResourceDrawer 
+        open={upsertDrawer.open} 
+        onClose={() => setUpsertDrawer({ ...upsertDrawer, open: false })} 
+        onUpsert={(data) => {
+          if (upsertDrawer.mode === 'create') {
+            onAddResource(data.type, data.title, data.content, data.link);
+          } else {
+            onEditResource(data.id, data.type, data.title, data.content, data.link);
+          }
+          setUpsertDrawer({ ...upsertDrawer, open: false });
+        }}
         noteId={noteId}
+        mode={upsertDrawer.mode}
+        initialData={upsertDrawer.initialData ? {
+            ...upsertDrawer.initialData,
+            link: upsertDrawer.initialData.type === 'Link' ? upsertDrawer.initialData.content : '',
+        } : undefined}
       />
     </Box>
   );
