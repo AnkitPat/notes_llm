@@ -5,10 +5,12 @@ import Link from 'next/link';
 import ResourceNavigation from '@/components/ResourceNavigation';
 import ResourceContentDisplay from '@/components/ResourceContentDisplay';
 import ChatQnASection from '@/components/ChatQnASection';
+import { DeleteResourceConfirmationDialog } from '@/components/DeleteResourceConfirmationDialog';
 import { Resource, ChatMessage, ResourceType } from '@/types/dashboard';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { signOut } from 'next-auth/react';
 import { uploadDocument } from '@/lib/api';
+import { API_BASE_URL } from '@/lib/config';
 
 interface NoteDetailPageProps {
   params: Promise<{
@@ -22,6 +24,10 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
 
   const [resources, setResources] = useState<Resource[]>([]);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; resource: Resource | null }>({
+    open: false,
+    resource: null,
+  });
 
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -29,7 +35,7 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
 
   const fetchResources = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/notes/${note_id}/resources`);
+      const response = await fetch(`${API_BASE_URL}/notes/${note_id}/resources`);
       if (response.ok) {
         const data = await response.json();
         const mapped = data.map((r: any) => ({
@@ -48,7 +54,7 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
   useEffect(() => {
     async function fetchNote() {
       try {
-        const response = await fetch(`http://localhost:8000/notes/${note_id}`);
+        const response = await fetch(`${API_BASE_URL}/notes/${note_id}`);
         if (response.ok) {
           const data = await response.json();
           setNoteName(data.name);
@@ -83,16 +89,39 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
     await fetchResources();
   };
 
+  const handleEditResource = async (id: string, type: ResourceType, title: string, content: string, link?: string) => {
+    await fetchResources();
+    if (selectedResource?.id === id) {
+        handleRemoveResource();
+    }
+  };
+
+  const handleDeleteResource = async (id: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/resources/${id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        await fetchResources();
+        if (selectedResource?.id === id) {
+          handleRemoveResource();
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting resource:', error);
+    }
+  };
+
   const handleUploadDocument = async (file: File) => {
-    // ... same as before
     setIsUploading(true);
-    // ...
+    // await uploadDocument(note_id, file); // Example, assuming this exists
+    setIsUploading(false);
+    await fetchResources();
   };
 
   const handleSendMessage = (message: string) => {
     const newUserMessage: ChatMessage = { role: 'user', message };
     setMessages((prevHistory) => [...prevHistory, newUserMessage]);
-    // TODO: Connect to backend API for AI response
   };
 
   return (
@@ -105,6 +134,13 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
             selectedResource={selectedResource}
             onSelectResource={handleSelectResource}
             onAddResource={handleAddResource}
+            onEditResource={handleEditResource}
+            onDeleteResource={(id) => {
+                const resource = resources.find(r => r.id === id);
+                if (resource) {
+                    setDeleteDialog({ open: true, resource });
+                }
+            }}
             onUploadDocument={handleUploadDocument}
             isUploading={isUploading}
             noteId={note_id}
@@ -147,6 +183,20 @@ const NoteDetailPage: React.FC<NoteDetailPageProps> = ({ params }) => {
             </div>
           </div>
         </div>
+        
+        {deleteDialog.resource && (
+            <DeleteResourceConfirmationDialog
+                open={deleteDialog.open}
+                onClose={() => setDeleteDialog({ open: false, resource: null })}
+                onConfirm={async () => {
+                    if (deleteDialog.resource) {
+                        await handleDeleteResource(deleteDialog.resource.id);
+                        setDeleteDialog({ open: false, resource: null });
+                    }
+                }}
+                resourceTitle={deleteDialog.resource.title}
+            />
+        )}
       </div>
     </ProtectedRoute>
   );
