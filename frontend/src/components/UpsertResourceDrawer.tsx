@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -8,13 +8,7 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { ResourceType } from '../types/dashboard';
 import { ResourcePreview } from './ResourcePreview';
-
-interface Props {
-  open: boolean;
-  onClose: () => void;
-  onAdd: (type: ResourceType, title: string, content: string, link?: string) => void;
-  noteId: string;
-}
+import { API_BASE_URL } from '../lib/config';
 
 interface ResourceData {
   id: string;
@@ -24,19 +18,42 @@ interface ResourceData {
   link?: string;
 }
 
-export const AddResourceDrawer: React.FC<Props> = ({ open, onClose, onAdd, noteId }) => {
-  const [title, setTitle] = useState('');
-  const [type, setType] = useState<ResourceType>('Note');
-  const [content, setContent] = useState('');
-  const [link, setLink] = useState('');
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  onUpsert: (data: ResourceData) => void;
+  noteId: string;
+  mode: 'create' | 'edit';
+  initialData?: ResourceData;
+}
+
+export const UpsertResourceDrawer: React.FC<Props> = ({ open, onClose, onUpsert, noteId, mode, initialData }) => {
+  const [title, setTitle] = useState(initialData?.title || '');
+  const [type, setType] = useState<ResourceType>(initialData?.type || 'Note');
+  const [content, setContent] = useState(initialData?.content || '');
+  const [link, setLink] = useState(initialData?.link || '');
   const [loading, setLoading] = useState(false);
-  const [createdResource, setCreatedResource] = useState<ResourceData | null>(null);
+  const [processedResource, setProcessedResource] = useState<ResourceData | null>(null);
+
+  useEffect(() => {
+    if (mode === 'edit' && initialData) {
+      setTitle(initialData.title);
+      setType(initialData.type);
+      setContent(initialData.content);
+      setLink(initialData.link || '');
+    }
+  }, [mode, initialData]);
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/resources', {
-        method: 'POST',
+      const url = mode === 'create' 
+        ? `${API_BASE_URL}/resources` 
+        : `${API_BASE_URL}/resources/${initialData?.id}`;
+      const method = mode === 'create' ? 'POST' : 'PATCH';
+
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           noteId, 
@@ -47,10 +64,11 @@ export const AddResourceDrawer: React.FC<Props> = ({ open, onClose, onAdd, noteI
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to create resource');
+      if (!response.ok) throw new Error(`Failed to ${mode} resource`);
       const data = await response.json();
-      setCreatedResource({ id: data.id, title, type, content, link });
-      onAdd(type, title, content, link);
+      const resultData = { id: data.id || initialData?.id, title, type, content, link };
+      setProcessedResource(resultData);
+      onUpsert(resultData);
     } catch (error) {
       console.error(error);
     } finally {
@@ -59,11 +77,13 @@ export const AddResourceDrawer: React.FC<Props> = ({ open, onClose, onAdd, noteI
   };
 
   const handleClose = () => {
-    setCreatedResource(null);
-    setTitle('');
-    setType('Note');
-    setContent('');
-    setLink('');
+    setProcessedResource(null);
+    if (mode === 'create') {
+      setTitle('');
+      setType('Note');
+      setContent('');
+      setLink('');
+    }
     onClose();
   };
 
@@ -74,29 +94,27 @@ export const AddResourceDrawer: React.FC<Props> = ({ open, onClose, onAdd, noteI
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
             <CircularProgress />
           </Box>
-        ) : createdResource ? (
+        ) : processedResource ? (
           <Box>
-            <Typography variant="h6" sx={{ mb: 2 }}>Preview</Typography>
-            <ResourcePreview title={createdResource.title} type={createdResource.type} content={createdResource.content} link={createdResource.link || ''} />
+            <Typography variant="h6" sx={{ mb: 2 }}>{mode === 'create' ? 'Created' : 'Updated'} Resource</Typography>
+            <ResourcePreview title={processedResource.title} type={processedResource.type} content={processedResource.content} link={processedResource.link || ''} />
             <Button onClick={handleClose} sx={{ mt: 2 }} fullWidth>Close</Button>
           </Box>
         ) : (
           <Box>
-            <Typography variant="h6" sx={{ mb: 2 }}>Add New Resource</Typography>
+            <Typography variant="h6" sx={{ mb: 2 }}>{mode === 'create' ? 'Add New' : 'Edit'} Resource</Typography>
             <TextField fullWidth label="Title" value={title} onChange={e => setTitle(e.target.value)} sx={{ mb: 2 }} />
             <TextField select fullWidth label="Type" value={type} onChange={e => setType(e.target.value as ResourceType)} sx={{ mb: 2 }}>
               <MenuItem value="Note">Note</MenuItem>
               <MenuItem value="Link">Link</MenuItem>
+              <MenuItem value="Document">Document</MenuItem>
             </TextField>
             {type === 'Note' ? (
               <TextField fullWidth multiline rows={4} label="Content (HTML)" value={content} onChange={e => setContent(e.target.value)} sx={{ mb: 2 }} />
-            ) : (
+            ) : type === 'Link' ? (
               <TextField fullWidth label="URL" value={link} onChange={e => setLink(e.target.value)} sx={{ mb: 2 }} />
-            )}
-            <Button variant="contained" fullWidth onClick={handleSubmit}>Create</Button>
-            {(title || (type === 'Note' ? content : link)) && (
-              <ResourcePreview title={title} type={type} content={content} link={link} showLivePreviewLabel={true} />
-            )}
+            ) : null}
+            <Button variant="contained" fullWidth onClick={handleSubmit}>{mode === 'create' ? 'Create' : 'Update'}</Button>
           </Box>
         )}
       </Box>

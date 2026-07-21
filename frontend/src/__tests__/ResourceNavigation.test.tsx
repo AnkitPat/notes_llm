@@ -19,12 +19,15 @@ describe('ResourceNavigation', () => {
         selectedResource={null}
         onSelectResource={() => {}}
         onAddResource={() => {}}
+        onEditResource={() => {}}
+        onUploadDocument={() => {}}
+        noteId="123"
       />
     );
 
-    expect(screen.getByText('Documents')).toBeInTheDocument();
-    expect(screen.getByText('Links')).toBeInTheDocument();
-    expect(screen.getByText('Notes')).toBeInTheDocument();
+    expect(screen.getByText('Documents (1)')).toBeInTheDocument();
+    expect(screen.getByText('Links (1)')).toBeInTheDocument();
+    expect(screen.getByText('Notes (1)')).toBeInTheDocument();
     expect(screen.getByText(/Doc 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Link 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Note 1/i)).toBeInTheDocument();
@@ -39,13 +42,16 @@ describe('ResourceNavigation', () => {
         selectedResource={null}
         onSelectResource={() => {}}
         onAddResource={() => {}}
+        onEditResource={() => {}}
+        onUploadDocument={() => {}}
+        noteId="123"
       />
     );
 
-    fireEvent.click(screen.getByText('Documents'));
+    fireEvent.click(screen.getByText('Documents (1)'));
     expect(screen.getByText(/Doc 1/i)).toBeInTheDocument();
     expect(screen.queryByText('Link 1')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByText('All Resources'));
+    fireEvent.click(screen.getByText('All Resources (3)'));
     expect(screen.getByText(/Link 1/i)).toBeInTheDocument();
   });
 
@@ -58,6 +64,9 @@ describe('ResourceNavigation', () => {
         selectedResource={null}
         onSelectResource={onSelectResourceMock}
         onAddResource={() => {}}
+        onEditResource={() => {}}
+        onUploadDocument={() => {}}
+        noteId="123"
       />
     );
 
@@ -73,16 +82,21 @@ describe('ResourceNavigation', () => {
         selectedResource={null}
         onSelectResource={() => {}}
         onAddResource={() => {}}
+        onEditResource={() => {}}
+        onUploadDocument={() => {}}
+        noteId="123"
       />
     );
 
-    expect(screen.getByText(/All Resources/i)).toBeInTheDocument();
-    expect(screen.getByText(/3/i)).toBeInTheDocument(); // Total count (1 doc, 1 link, 1 note in dummyResources)
-    expect(screen.getByText(/Documents/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/1/i).length).toBeGreaterThanOrEqual(1); // Counts for categories
+    expect(screen.getByText(/All Resources \(3\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Documents \(1\)/i)).toBeInTheDocument();
   });
 
   it('calls onAddResource when "Create Resource" button is clicked after filling the drawer form', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ id: 'new-id' }),
+    }));
     const onAddResourceMock = vi.fn();
     render(
       <ResourceNavigation
@@ -90,6 +104,9 @@ describe('ResourceNavigation', () => {
         selectedResource={null}
         onSelectResource={() => {}}
         onAddResource={onAddResourceMock}
+        onEditResource={() => {}}
+        onUploadDocument={() => {}}
+        noteId="123"
       />
     );
 
@@ -97,8 +114,6 @@ describe('ResourceNavigation', () => {
     fireEvent.click(screen.getByRole('button', { name: /add note\/link/i }));
 
     // Find the drawer and fill the form inside it
-    // AddResourceDrawer uses MUI Drawer, which might not be immediately visible in the DOM depending on implementation,
-    // but the fields should be accessible.
     
     const titleInput = screen.getByLabelText(/title/i);
     const contentTextarea = screen.getByLabelText(/content/i);
@@ -106,7 +121,7 @@ describe('ResourceNavigation', () => {
     fireEvent.change(titleInput, { target: { value: 'New Test Note' } });
     
     // Select type
-    const select = screen.getByLabelText(/type/i);
+    const select = screen.getByRole('combobox', { name: /type/i });
     fireEvent.mouseDown(select);
     const option = await screen.findByRole('option', { name: 'Note' });
     fireEvent.click(option);
@@ -116,7 +131,10 @@ describe('ResourceNavigation', () => {
     // Click "Create" button in the drawer
     fireEvent.click(screen.getByRole('button', { name: /create/i }));
 
-    expect(onAddResourceMock).toHaveBeenCalledTimes(1);
-    expect(onAddResourceMock).toHaveBeenCalledWith('Note', 'New Test Note', 'This is the content of the new note.');
+    await waitFor(() => {
+        expect(onAddResourceMock).toHaveBeenCalledTimes(1);
+    });
+    expect(onAddResourceMock).toHaveBeenCalledWith('Note', 'New Test Note', 'This is the content of the new note.', '');
+    vi.unstubAllGlobals();
   });
 });

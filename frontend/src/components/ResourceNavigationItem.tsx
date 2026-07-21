@@ -53,7 +53,7 @@ export const ResourceNavigationItem: React.FC<Props> = ({ resource, selected, on
     >
       <ListItemIcon sx={{ color: 'white', minWidth: 40 }}>{getIcon(resource.type)}</ListItemIcon>
       <ListItemText primary={resource.title} />
-      {resource.type === 'Note' && (
+      {(resource.type === 'Note' || resource.type === 'Link') && (
         <IconButton size="small" onClick={handleMenuClick} sx={{ color: 'white' }}>
           <MoreVertIcon />
         </IconButton>

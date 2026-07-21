@@ -18,6 +18,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     }
   }, [status, router]);
 
+
   useEffect(() => {
     if (session?.user?.email) {
       fetch(`http://localhost:8000/check-status/${session.user.email}`)
