@@ -1,8 +1,10 @@
+import { API_BASE_URL } from './config';
+
 export async function uploadDocument(file: File, email: string) {
   const formData = new FormData();
   formData.append('file', file);
 
-  const response = await fetch(`http://localhost:8000/upload?email=${encodeURIComponent(email)}`, {
+  const response = await fetch(`${API_BASE_URL}/upload?email=${encodeURIComponent(email)}`, {
     method: 'POST',
     body: formData,
   });

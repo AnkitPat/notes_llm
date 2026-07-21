@@ -50,7 +50,7 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
   };
 
   const categories: readonly (ResourceType | 'All Resources')[] = ['All Resources', 'Document', 'Link', 'Note'] as const;
-
+  
   const getCount = (category: ResourceType | 'All Resources') => {
     if (category === 'All Resources') return resources.length;
     return resources.filter((res) => res.type === category).length;
