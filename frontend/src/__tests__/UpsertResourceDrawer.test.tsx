@@ -1,10 +1,19 @@
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { UpsertResourceDrawer } from '../components/UpsertResourceDrawer';
 import { vi } from 'vitest';
+import { SessionProvider } from 'next-auth/react';
 
 describe('UpsertResourceDrawer', () => {
   const mockOnClose = vi.fn();
   const mockOnUpsert = vi.fn();
+
+  const renderWithSession = (ui: React.ReactElement) => {
+    return render(
+      <SessionProvider session={{ user: { email: 'test@example.com' }, expires: '...' } as any}>
+        {ui}
+      </SessionProvider>
+    );
+  };
 
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn());
@@ -16,7 +25,7 @@ describe('UpsertResourceDrawer', () => {
       json: async () => ({ id: 'new-id' }),
     });
 
-    render(<UpsertResourceDrawer open={true} onClose={mockOnClose} onUpsert={mockOnUpsert} noteId="test-note-id" mode="create" />);
+    renderWithSession(<UpsertResourceDrawer open={true} onClose={mockOnClose} onUpsert={mockOnUpsert} noteId="test-note-id" mode="create" />);
     
     // Fill title
     const titleInput = screen.getByLabelText(/Title/i);
@@ -43,7 +52,7 @@ describe('UpsertResourceDrawer', () => {
 
     const initialData = { id: 'existing-id', title: 'Old Title', type: 'Note' as any, content: 'Old Content' };
     
-    render(<UpsertResourceDrawer open={true} onClose={mockOnClose} onUpsert={mockOnUpsert} noteId="test-note-id" mode="edit" initialData={initialData as any} />);
+    renderWithSession(<UpsertResourceDrawer open={true} onClose={mockOnClose} onUpsert={mockOnUpsert} noteId="test-note-id" mode="edit" initialData={initialData as any} />);
     
     // Update title
     const titleInput = screen.getByLabelText(/Title/i);

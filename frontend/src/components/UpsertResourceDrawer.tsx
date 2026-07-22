@@ -128,7 +128,15 @@ export const UpsertResourceDrawer: React.FC<Props> = ({ open, onClose, onUpsert,
           <Box>
             <Typography variant="h6" sx={{ mb: 2 }}>{mode === 'create' ? 'Add New' : 'Edit'} Resource</Typography>
             <TextField fullWidth label="Title" value={title} onChange={e => setTitle(e.target.value)} sx={{ mb: 2 }} />
-            <TextField select fullWidth label="Type" value={type} onChange={e => { setType(e.target.value as ResourceType); setUploadStatus('idle'); setUploadedFileLink(null); setUploadedFileName(null); }} sx={{ mb: 2 }}>
+            <TextField 
+              select 
+              fullWidth 
+              label="Type" 
+              value={type} 
+              onChange={e => { setType(e.target.value as ResourceType); setUploadStatus('idle'); setUploadedFileLink(null); setUploadedFileName(null); }} 
+              disabled={mode === 'edit'}
+              sx={{ mb: 2 }}
+            >
               <MenuItem value="Note">Note</MenuItem>
               <MenuItem value="Link">Link</MenuItem>
               <MenuItem value="Document">Document</MenuItem>
@@ -139,7 +147,9 @@ export const UpsertResourceDrawer: React.FC<Props> = ({ open, onClose, onUpsert,
               <TextField fullWidth label="URL" value={link} onChange={e => setLink(e.target.value)} sx={{ mb: 2 }} />
             ) : type === 'Document' ? (
               <Box sx={{ mb: 2 }}>
-                {uploadStatus === 'idle' || uploadStatus === 'error' ? (
+                {mode === 'edit' ? (
+                  <Typography>File: {initialData?.content}</Typography>
+                ) : uploadStatus === 'idle' || uploadStatus === 'error' ? (
                   <Button component="label" variant="outlined" fullWidth>
                     {uploadStatus === 'error' ? 'Retry Upload' : 'Select & Upload PDF/Doc'}
                     <input type="file" hidden onChange={handleFileUpload} accept=".pdf,.doc,.docx,.txt" />
@@ -155,7 +165,11 @@ export const UpsertResourceDrawer: React.FC<Props> = ({ open, onClose, onUpsert,
               variant="contained" 
               fullWidth 
               onClick={handleSubmit}
-              disabled={(type === 'Document' && uploadStatus !== 'success') || (type === 'Note' && !content) || (type === 'Link' && !link)}
+              disabled={
+                (type === 'Document' && mode === 'create' && uploadStatus !== 'success') || 
+                (type === 'Note' && !content) || 
+                (type === 'Link' && !link)
+              }
             >
               {mode === 'create' ? 'Create' : 'Update'}
             </Button>

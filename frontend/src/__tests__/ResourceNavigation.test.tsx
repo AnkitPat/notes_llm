@@ -1,9 +1,10 @@
 // frontend/src/__tests__/ResourceNavigation.test.tsx
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ResourceNavigation from '@/components/ResourceNavigation';
 import { Resource } from '../types/dashboard';
 import { vi } from 'vitest';
+import { SessionProvider } from 'next-auth/react';
 
 describe('ResourceNavigation', () => {
   const dummyResources: Resource[] = [
@@ -12,15 +13,23 @@ describe('ResourceNavigation', () => {
     { id: 'note-1', type: 'Note', title: 'Note 1', content: '...' },
   ];
 
+  const renderWithSession = (ui: React.ReactElement) => {
+    return render(
+      <SessionProvider session={null}>
+        {ui}
+      </SessionProvider>
+    );
+  };
+
   it('renders resource types and resources', () => {
-    render(
+    renderWithSession(
       <ResourceNavigation
         resources={dummyResources}
         selectedResource={null}
         onSelectResource={() => {}}
         onAddResource={() => {}}
         onEditResource={() => {}}
-        onUploadDocument={() => {}}
+        onDeleteResource={() => {}}
         noteId="123"
       />
     );
@@ -31,19 +40,18 @@ describe('ResourceNavigation', () => {
     expect(screen.getByText(/Doc 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Link 1/i)).toBeInTheDocument();
     expect(screen.getByText(/Note 1/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /add note\/link/i })).toBeInTheDocument();
-    expect(screen.getByText(/upload pdf\/doc/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /add resource/i })).toBeInTheDocument();
   });
 
   it('filters resources by type when type is clicked', () => {
-    render(
+    renderWithSession(
       <ResourceNavigation
         resources={dummyResources}
         selectedResource={null}
         onSelectResource={() => {}}
         onAddResource={() => {}}
         onEditResource={() => {}}
-        onUploadDocument={() => {}}
+        onDeleteResource={() => {}}
         noteId="123"
       />
     );
@@ -58,14 +66,14 @@ describe('ResourceNavigation', () => {
 
   it('calls onSelectResource when a resource is clicked', () => {
     const onSelectResourceMock = vi.fn();
-    render(
+    renderWithSession(
       <ResourceNavigation
         resources={dummyResources}
         selectedResource={null}
         onSelectResource={onSelectResourceMock}
         onAddResource={() => {}}
         onEditResource={() => {}}
-        onUploadDocument={() => {}}
+        onDeleteResource={() => {}}
         noteId="123"
       />
     );
@@ -76,14 +84,14 @@ describe('ResourceNavigation', () => {
   });
 
   it('renders category cards with item counts', () => {
-    render(
+    renderWithSession(
       <ResourceNavigation
         resources={dummyResources}
         selectedResource={null}
         onSelectResource={() => {}}
         onAddResource={() => {}}
         onEditResource={() => {}}
-        onUploadDocument={() => {}}
+        onDeleteResource={() => {}}
         noteId="123"
       />
     );
@@ -98,20 +106,20 @@ describe('ResourceNavigation', () => {
       json: async () => ({ id: 'new-id' }),
     }));
     const onAddResourceMock = vi.fn();
-    render(
+    renderWithSession(
       <ResourceNavigation
         resources={dummyResources}
         selectedResource={null}
         onSelectResource={() => {}}
         onAddResource={onAddResourceMock}
         onEditResource={() => {}}
-        onUploadDocument={() => {}}
+        onDeleteResource={() => {}}
         noteId="123"
       />
     );
 
-    // Click "Add Note/Link" to show the drawer
-    fireEvent.click(screen.getByRole('button', { name: /add note\/link/i }));
+    // Click "Add Resource" to show the drawer
+    fireEvent.click(screen.getByRole('button', { name: /add resource/i }));
 
     // Find the drawer and fill the form inside it
     
