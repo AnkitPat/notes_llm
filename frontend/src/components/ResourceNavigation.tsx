@@ -16,8 +16,6 @@ interface ResourceNavigationProps {
   onAddResource: (type: ResourceType, title: string, content: string, link?: string) => void;
   onEditResource: (id: string, type: ResourceType, title: string, content: string, link?: string) => void;
   onDeleteResource: (id: string) => void;
-  onUploadDocument: (file: File) => void;
-  isUploading?: boolean;
   noteId: string;
 }
 
@@ -28,8 +26,6 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
   onAddResource,
   onEditResource,
   onDeleteResource,
-  onUploadDocument,
-  isUploading = false,
   noteId,
 }) => {
   const [filterType, setFilterType] = useState<ResourceType | 'All Resources'>('All Resources');
@@ -42,12 +38,6 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
     filterType === 'All Resources'
       ? resources
       : resources.filter((res) => res.type === filterType);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      onUploadDocument(e.target.files[0]);
-    }
-  };
 
   const categories: readonly (ResourceType | 'All Resources')[] = ['All Resources', 'Document', 'Link', 'Note'] as const;
   
@@ -93,18 +83,8 @@ const ResourceNavigation: React.FC<ResourceNavigationProps> = ({
 
       <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'grey.700' }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Button
-            component="label"
-            variant="contained"
-            disabled={isUploading}
-            fullWidth
-            sx={{ py: 1 }}
-          >
-            {isUploading ? 'Uploading...' : 'Upload PDF/Doc'}
-            <input type="file" hidden onChange={handleFileChange} accept=".pdf,.doc,.docx,.txt" />
-          </Button>
           <Button variant="contained" color="success" fullWidth onClick={() => setUpsertDrawer({ open: true, mode: 'create', initialData: undefined })}>
-            Add Note/Link
+            Add Resource
           </Button>
         </Box>
       </Box>
