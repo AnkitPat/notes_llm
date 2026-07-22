@@ -53,11 +53,9 @@ export const ResourceNavigationItem: React.FC<Props> = ({ resource, selected, on
     >
       <ListItemIcon sx={{ color: 'white', minWidth: 40 }}>{getIcon(resource.type)}</ListItemIcon>
       <ListItemText primary={resource.title} />
-      {(resource.type === 'Note' || resource.type === 'Link') && (
-        <IconButton size="small" onClick={handleMenuClick} sx={{ color: 'white' }}>
-          <MoreVertIcon />
-        </IconButton>
-      )}
+      <IconButton size="small" onClick={handleMenuClick} sx={{ color: 'white' }}>
+        <MoreVertIcon />
+      </IconButton>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
         <MenuItem onClick={() => { handleClose(); onEdit(); }}>Edit</MenuItem>
         <MenuItem onClick={() => { handleClose(); onDelete(); }}>Delete</MenuItem>
