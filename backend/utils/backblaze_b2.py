@@ -24,7 +24,7 @@ class BackblazeB2Helper:
         # Generate a download URL with authorization token for the specific file
         
         file_name = file_path # Assuming file_path is the full path in the bucket
-        
+        print(file_name)
         # Correctly call get_download_authorization on the bucket object
         download_auth_token = self.bucket.get_download_authorization(
             file_name_prefix=file_name,

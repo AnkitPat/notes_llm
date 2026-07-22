@@ -8,6 +8,7 @@ import { Resource } from '../types/dashboard';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { API_BASE_URL } from '@/lib/config';
 
 // Set up worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -22,9 +23,10 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (selectedResource?.type === 'PDF') {
+    console.log(selectedResource, 'sel res')
+    if (selectedResource?.type === 'Document') {
       setLoading(true);
-      fetch(`/api/resources/${selectedResource._id}/signed-url`)
+      fetch(`${API_BASE_URL}/resources/${selectedResource.id}/signed-url`)
         .then(res => res.json())
         .then(data => {
           setSignedUrl(data.url);
@@ -45,7 +47,7 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
 
   const renderContent = () => {
     switch (selectedResource.type) {
-      case 'Document':
+      // case 'Document':
       case 'Note':
         return (
           <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -75,7 +77,7 @@ const ResourceContentDisplay: React.FC<ResourceContentDisplayProps> = ({ selecte
             />
           </Box>
         );
-      case 'PDF':
+      case 'Document':
         if (loading) return <CircularProgress />;
         if (!signedUrl) return <Typography>Error loading PDF.</Typography>;
         return (

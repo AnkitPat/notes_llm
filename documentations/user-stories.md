@@ -89,3 +89,15 @@
 - The live preview section only appears when at least one field (Title, Content, or Link URL) is non-empty.
 - Unit/integration tests are added/updated to verify the preview block behavior.
 
+## US9: Signed URL Endpoint
+**Status:** Not Started
+**Description:** As a user, I want to be able to request a signed URL for a resource, so that I can access secure files in Backblaze B2.
+
+**Acceptance Criteria:**
+- GET `/resources/{resource_id}/signed-url` endpoint is implemented.
+- The endpoint queries the MongoDB `db.resources` collection to find the resource.
+- If not found, a 404 error is returned.
+- If found, the B2 file path is used to generate a signed URL via `BackblazeB2Helper`.
+- The endpoint returns `{"url": signed_url}`.
+- Unit tests are implemented to verify success and failure scenarios.
+
